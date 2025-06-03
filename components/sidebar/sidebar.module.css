@@ -1,0 +1,117 @@
+.sbSection {
+    height: 100%;
+    min-width: 200px;
+    max-width: 300px;
+    width: 15%;
+    border-right: 1px solid black;
+}
+
+.sbCtrls {
+    height: 100px;
+    border-bottom: 1px solid black;
+}
+
+.sbCtrlsTop {
+    height: 70%;
+    padding: 5px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.pfpWrapper {
+    width: 40px;
+    height: 40px;
+
+    border-radius: 20px;
+    border: 1px solid black;
+}
+
+.addFriendWrapper {
+    width: 30px;
+    height: 30px;
+    
+    border: 1px solid black;
+}
+
+.sbSearchWrapper {
+    height: 30%;
+    padding: 5px;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+
+.sbSearch {
+    width: 75%;
+    height: 80%;
+    font-family: inherit;
+    font-size: 1rem;
+    padding: 2px;
+
+    border: none;
+    outline: none;
+}
+
+.sbSearchBut {
+    font-family: inherit;
+    font-size: .7rem;
+    padding: 2px;
+
+    background: none;
+    border-radius: 2px;
+    border: 1px solid black;
+}
+
+.sbFriendsList {
+    height: calc(100% - 100px);
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.sbFriend {
+    height: 50px;
+    border-bottom: 1px solid black;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+}
+
+.sbFriendLeft {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.pfpSmallWrapper {
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+    border: 1px solid black;
+
+}
+
+.sbFriendRight {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    gap: 5px;
+}
+
+.messageSmallIcon {
+    width: 15px;
+    height: 15px;
+
+    border: 1px solid black;
+}
+
+.videoSmallIcon {
+    width: 15px;
+    height: 15px;
+
+    border: 1px solid black;
+}
+
