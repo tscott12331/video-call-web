@@ -1,0 +1,9 @@
+- person can make account
+- user can befriend other users
+- user can make video call to other user
+    - video call includes audio
+- user can turn off camera during call
+
+** maybies **
+- user can chat with other users (text)
+- non-users (clients without account) can make calls
