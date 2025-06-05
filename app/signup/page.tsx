@@ -1,5 +1,5 @@
 import styles from "./page.module.css";
-import UserCredentialForm from "@/components/forms/user-credential-form";
+import UserCredentialForm from "@/lib/components/forms/user-credential-form";
 
 export default function Signup() {
     return (

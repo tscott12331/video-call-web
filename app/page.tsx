@@ -1,6 +1,6 @@
 import styles from "./page.module.css";
-import Sidebar from "@/components/sidebar/sidebar";
-import MessageArea from "@/components/messaging/message-area";
+import Sidebar from "@/lib/components/sidebar/sidebar";
+import MessageArea from "@/lib/components/messaging/message-area";
 
 
 export default function Home() {
