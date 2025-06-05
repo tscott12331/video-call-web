@@ -1,5 +1,5 @@
 {
-  "id": "f22bd979-1edd-4a97-a5d8-4ff82abab017",
+  "id": "03836925-409d-4258-97d7-ce59f9924a7d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -8,9 +8,9 @@
       "name": "UserCredential",
       "schema": "",
       "columns": {
-        "UserId": {
-          "name": "UserId",
-          "type": "uuid",
+        "Username": {
+          "name": "Username",
+          "type": "varchar(32)",
           "primaryKey": true,
           "notNull": true
         },
@@ -23,15 +23,15 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "UserCredential_UserId_UserProfile_UserId_fk": {
-          "name": "UserCredential_UserId_UserProfile_UserId_fk",
+        "UserCredential_Username_UserProfile_Username_fk": {
+          "name": "UserCredential_Username_UserProfile_Username_fk",
           "tableFrom": "UserCredential",
           "tableTo": "UserProfile",
           "columnsFrom": [
-            "UserId"
+            "Username"
           ],
           "columnsTo": [
-            "UserId"
+            "Username"
           ],
           "onDelete": "no action",
           "onUpdate": "no action"
@@ -47,18 +47,31 @@
       "name": "UserProfile",
       "schema": "",
       "columns": {
-        "UserId": {
-          "name": "UserId",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
         "Username": {
           "name": "Username",
           "type": "varchar(32)",
-          "primaryKey": false,
+          "primaryKey": true,
           "notNull": true
+        },
+        "UserBio": {
+          "name": "UserBio",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "CreatedAt": {
+          "name": "CreatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "UpdatedAt": {
+          "name": "UpdatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
