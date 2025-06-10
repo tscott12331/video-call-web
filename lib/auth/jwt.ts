@@ -10,7 +10,7 @@ const pubkey = await importSPKI(spki, alg);
 
 
 export const createSignedJWT = async (username: string) => {
-    "user server";
+    "use server";
     return await new SignJWT({ username })
         .setProtectedHeader({ alg: 'RS256' })
         .setIssuedAt()

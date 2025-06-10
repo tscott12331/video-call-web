@@ -3,6 +3,9 @@ import bcrypt from 'bcrypt';
 import { UserProfileTable, UserCredentialTable } from '../db/schemas/user';
 import { db } from '../db/db';
 import { eq } from 'drizzle-orm';
+import { cookies } from 'next/headers';
+import { createSignedJWT } from '../auth/jwt';
+import { redirect } from 'next/navigation';
 
 export async function login(prevState: unknown, formData: FormData) {
     const username = formData.get('username')?.toString();
@@ -14,23 +17,23 @@ export async function login(prevState: unknown, formData: FormData) {
             Password: UserCredentialTable.Password
         }).from(UserProfileTable)
             .innerJoin(UserCredentialTable, 
-                       eq(UserProfileTable.Username, UserCredentialTable.Username));
+                       eq(UserProfileTable.Username, UserCredentialTable.Username))
+            .where(eq(UserProfileTable.Username, username));
         
-        const res = await bcrypt.compare(password, pwdArray[0].Password)
-
-        if(res) {
-            return {
-                success: true
-            }
-        } else {
+        
+        if(!await bcrypt.compare(password, pwdArray[0].Password)) {
             return {
                 error: "Incorrect username or password"
             };
         }
+
+        
+        (await cookies()).set('token', await createSignedJWT(username));
     } catch(error) {
         console.error(error);
         return { error: "Server error" };
     }
+    redirect('/');
 }
 
 export async function signup(prevState: unknown, formData: FormData) {
@@ -59,12 +62,11 @@ export async function signup(prevState: unknown, formData: FormData) {
             Password: hashword
         });
 
-        return {
-            success: true
-        };
 
     } catch(error) {
         console.error(error);
         return { error: "Server error" };
+    } finally {
+        redirect('/');
     }
 }
