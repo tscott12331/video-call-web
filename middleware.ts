@@ -8,17 +8,17 @@ export async function middleware(req: NextRequest) {
         return NextResponse.next();
     }
 
+    const token = req.cookies.get("token")?.value;
+    const authenticated = token && await verifyJWT(token);
     if(!req.nextUrl.pathname.startsWith("/login") &&
       !req.nextUrl.pathname.startsWith("/signup")) {
         // check jwt
-        const token = req.cookies.get("token")?.value;
-        const url = new URL('/login', req.nextUrl.origin);
-        let tokenResponse;
-        if(!token ||
-          !(tokenResponse = await verifyJWT(token))) {
-            console.log("buh");
-            return NextResponse.redirect(url);
+        
+        if(!authenticated) {
+            return NextResponse.redirect(new URL('/login', req.nextUrl.origin));
         } 
+    } else if(authenticated) {
+        return NextResponse.redirect(new URL('/', req.nextUrl.origin));
     }
     return NextResponse.next();
 }
