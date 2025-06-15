@@ -1,0 +1,12 @@
+.myButton {
+    font: inherit;
+    outline: none;
+    border: 1px solid black;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 5px;
+    border-radius: 2px;
+}

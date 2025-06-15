@@ -1,0 +1,11 @@
+.vaSection {
+    flex-grow: 2;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.vaSection video {
+    width: 100%;
+    aspect-ratio:initial;
+}
