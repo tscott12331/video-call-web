@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import styles from './mic-toggle-dropdown.module.css';
 
 interface MicToggleDropdownProps {
-    onMicToggle?: (muted: boolean) => void;
-    onAudioInputChange?: (dev: MediaDeviceInfo) => void;
+    onMicToggle?: (muted: boolean) => Promise<void> | void;
+    onAudioInputChange?: (dev: MediaDeviceInfo) => Promise<void> | void;
     width?: string;
 }
 

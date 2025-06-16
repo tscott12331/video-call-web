@@ -15,9 +15,10 @@ export default function VideoArea() {
     const [shouldMaintain, setShouldMaintain] = useState<boolean>(false);
     const [myStream, setMyStream] = useState<MediaStream|null>(null);
     const [mediaConstraints, setMediaConstraints] = useState<TMediaConstraint>({ video: true, audio: true });
+    const [isMuted, setIsMuted] = useState<boolean>(false);
     const myVideoFeed = useRef<HTMLVideoElement>(null);
-    
-    const FLASH_TIMEOUT = 2000;
+
+    const FLASH_TIMEOUT = 3000;
 
     const flashControls = (e: React.SyntheticEvent<HTMLElement, MouseEvent>) => {
         e.stopPropagation();
@@ -51,6 +52,13 @@ export default function VideoArea() {
         setMediaConstraints({...newConstraints});
     }
 
+    const handleMicToggle = (muted: boolean) => {
+        myStream?.getAudioTracks().forEach(track => {
+            track.enabled = !muted;
+        })
+        setIsMuted(muted);
+    }
+
     useEffect(() => {
         if(shouldFlash) {
             setShouldShowInfo(true);
@@ -71,6 +79,7 @@ export default function VideoArea() {
 
     useEffect(() => {
         if(myVideoFeed.current) myVideoFeed.current.srcObject = myStream;
+        handleMicToggle(isMuted);
     }, [myStream])
 
     return (
@@ -88,6 +97,7 @@ export default function VideoArea() {
             onMouseEnter={maintainControls}
             onMouseLeave={resetFlash}
             onAudioInputChange={handleAudioInputChange}
+            onMicToggle={handleMicToggle}
             visible={shouldShowInfo}
             />
         </section>
