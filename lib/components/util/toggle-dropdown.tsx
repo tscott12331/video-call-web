@@ -26,7 +26,7 @@ export default function ToggleDropdown<T>({
 }: ToggleDropdownProps<T>) {
     const [shouldShowDd, setShouldShowDd] = useState<boolean>(false);
     const [selItem, setSelItem] = useState<string|number>(initialSelectId);
-    const [isToggled, setIsToggled] = useState<boolean>(false);
+    const [isEnabled, setIsEnabled] = useState<boolean>(true);
 
     const onGlobalClick = () => {
         if(shouldShowDd) setShouldShowDd(false);
@@ -38,8 +38,8 @@ export default function ToggleDropdown<T>({
     }
 
     const toggle = () => {
-        onToggle?.(!isToggled);
-        setIsToggled(!isToggled);
+        onToggle?.(!isEnabled);
+        setIsEnabled(!isEnabled);
     }
 
     useEffect(() => {
@@ -59,10 +59,10 @@ export default function ToggleDropdown<T>({
             <button className={styles.toggleButton}
             onClick={toggle}
             >
-                {isToggled ?
-                    toggleOffRender ?? "off"
-                :
+                {isEnabled ?
                     toggleOnRender ?? "on"
+                :
+                    toggleOffRender ?? "off"
                 }
             </button>
             <div className={styles.dropdownToggle}

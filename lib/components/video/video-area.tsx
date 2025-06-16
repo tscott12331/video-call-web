@@ -15,7 +15,8 @@ export default function VideoArea() {
     const [shouldMaintain, setShouldMaintain] = useState<boolean>(false);
     const [myStream, setMyStream] = useState<MediaStream|null>(null);
     const [mediaConstraints, setMediaConstraints] = useState<TMediaConstraint>({ video: true, audio: true });
-    const [isMuted, setIsMuted] = useState<boolean>(false);
+    const [micIsEnabled, setMicIsEnabled] = useState<boolean>(true);
+    const [videoIsEnabled, setVideoIsEnabled] = useState<boolean>(true);
     const myVideoFeed = useRef<HTMLVideoElement>(null);
 
     const FLASH_TIMEOUT = 3000;
@@ -52,11 +53,25 @@ export default function VideoArea() {
         setMediaConstraints({...newConstraints});
     }
 
-    const handleMicToggle = (muted: boolean) => {
+    const handleMicToggle = (enabled: boolean) => {
         myStream?.getAudioTracks().forEach(track => {
-            track.enabled = !muted;
+            track.enabled = enabled;
         })
-        setIsMuted(muted);
+        setMicIsEnabled(enabled);
+    }
+
+    const handleVideoToggle = (enabled: boolean) => {
+        myStream?.getVideoTracks().forEach(track => {
+            track.enabled = enabled;
+        })
+        setVideoIsEnabled(enabled);
+    }
+
+    const handleVideoInputChange = async (dev: MediaDeviceInfo) => {
+        let newConstraints = {...mediaConstraints};
+        newConstraints.video = {deviceId: { exact: dev.deviceId }};
+        setMediaConstraints({...newConstraints});
+
     }
 
     useEffect(() => {
@@ -79,7 +94,8 @@ export default function VideoArea() {
 
     useEffect(() => {
         if(myVideoFeed.current) myVideoFeed.current.srcObject = myStream;
-        handleMicToggle(isMuted);
+        handleMicToggle(micIsEnabled);
+        handleVideoToggle(videoIsEnabled);
     }, [myStream])
 
     return (
@@ -98,6 +114,8 @@ export default function VideoArea() {
             onMouseLeave={resetFlash}
             onAudioInputChange={handleAudioInputChange}
             onMicToggle={handleMicToggle}
+            onVideoInputChange={handleVideoInputChange}
+            onVideoToggle={handleVideoToggle}
             visible={shouldShowInfo}
             />
         </section>
