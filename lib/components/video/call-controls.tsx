@@ -4,11 +4,15 @@ import Button from '../util/button';
 import MicToggleDropdown from './mic-toggle-dropdown';
 
 interface CallControlsProps {
+    onAudioInputChange?: (dev: MediaDeviceInfo) => void;
+    onAudioOutputChange?: (dev: MediaDeviceInfo) => void; // not entirely sure
+    onVideoInputChange?: (dev: MediaDeviceInfo) => void;
     visible?: boolean;
 }
 
 export default function CallControls(
     {
+        onAudioInputChange,
         visible = true,
         ...rest
     }: CallControlsProps & React.HTMLAttributes<HTMLDivElement>) {
@@ -21,7 +25,9 @@ export default function CallControls(
             <div className={styles.sliderWrapper}>
                 <Slider />
             </div>
-            <MicToggleDropdown />
+            <MicToggleDropdown 
+            onAudioInputChange={(dev) => onAudioInputChange?.(dev)}
+            />
             <div className={styles.hangupWrapper}>
                 <Button>
                     <img src='/favicon.ico' />

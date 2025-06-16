@@ -2,21 +2,18 @@ import { useEffect, useState } from 'react';
 import styles from './mic-toggle-dropdown.module.css';
 
 interface MicToggleDropdownProps {
+    onMicToggle?: (muted: boolean) => void;
+    onAudioInputChange?: (dev: MediaDeviceInfo) => void;
     width?: string;
-    onDeviceSelect?: (dev: device) => void;
-}
-
-type device = {
-    id: string;
-    name: string;
 }
 
 export default function MicToggleDropdown({
+    onMicToggle,
+    onAudioInputChange,
     width = "20%",
-    onDeviceSelect,
 }: MicToggleDropdownProps) {
     const [shouldShowDd, setShouldShowDd] = useState<boolean>(false);
-    const [devices, setDevices] = useState<device[]>([]);
+    const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
     const [selDevice, setSelDevice] = useState<string>("default");
     const [isMuted, setIsMuted] = useState<boolean>(false);
 
@@ -24,9 +21,29 @@ export default function MicToggleDropdown({
         if(shouldShowDd) setShouldShowDd(false);
     }
 
-    const handleDropdownSelect = (dev: device) => {
-        setSelDevice(dev.id)
-        if(onDeviceSelect) onDeviceSelect(dev);
+    const handleDropdownSelect = (dev: MediaDeviceInfo) => {
+        setSelDevice(dev.deviceId)
+        onAudioInputChange?.(dev);
+    }
+
+    const toggleMute = () => {
+        onMicToggle?.(!isMuted);
+        setIsMuted(!isMuted);
+    }
+
+    const populateDropdown = async () => {
+        try {
+            const deviceList = await navigator.mediaDevices.enumerateDevices();
+            let newDevices: MediaDeviceInfo[] = [];
+            deviceList.forEach(dev => {
+                if(dev.kind !== 'audioinput') return;
+                newDevices.push(dev)
+            })
+
+            setDevices(newDevices);
+        } catch(err) {
+            console.error(err);
+        }
     }
 
     useEffect(() => {
@@ -34,6 +51,11 @@ export default function MicToggleDropdown({
 
         return () => document.removeEventListener('click', onGlobalClick);
     }, [shouldShowDd])
+
+
+    useEffect(() => {
+        populateDropdown();
+    }, []);
 
     return (
         <div className={styles.wrapper}
@@ -43,7 +65,7 @@ export default function MicToggleDropdown({
             }}
         >
             <button className={styles.muteButton}
-            onClick={() => setIsMuted(!isMuted)}
+            onClick={toggleMute}
             >
                 {isMuted ?
                 <img className={styles.muteIcon} 
@@ -68,10 +90,10 @@ export default function MicToggleDropdown({
                     :
                     devices.map(dev => 
                     <div className={styles.dropdownItem}
-                        data-selected={selDevice === dev.id ? "true" : "false"}
+                        data-selected={selDevice === dev.deviceId ? "true" : "false"}
                         onClick={() => handleDropdownSelect(dev)}
-                        key={dev.id}
-                    >{dev.name}</div>
+                        key={dev.deviceId}
+                    >{dev.label}</div>
                     )
                 }
             </div>
