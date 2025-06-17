@@ -48,6 +48,12 @@ export default function ToggleDropdown<T>({
         return () => document.removeEventListener('click', onGlobalClick);
     }, [shouldShowDd])
 
+    useEffect(() => {
+        if(items.length === 0 || selItem !== initialSelectId) return;
+        if(!items.find((item) => toId(item) === initialSelectId)) {
+            setSelItem(toId(items[0]));
+        }
+    }, [items])
 
     return (
         <div className={styles.wrapper}
