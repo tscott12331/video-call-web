@@ -1,5 +1,6 @@
 "use client";
 import styles from './video-area.module.css';
+import { io } from 'socket.io-client';
 import UserInfoTopBar from '@/lib/components/user-info/user-info-top-bar';
 import CallControls from './call-controls';
 
@@ -97,6 +98,11 @@ export default function VideoArea() {
         handleMicToggle(micIsEnabled);
         handleVideoToggle(videoIsEnabled);
     }, [myStream])
+
+    useEffect(() => {
+        const socket = io("http://localhost:4000");
+        console.log(socket);
+    }, [])
 
     return (
         <section className={styles.vaSection}
