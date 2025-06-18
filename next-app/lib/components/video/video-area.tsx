@@ -10,6 +10,7 @@ type TMediaConstraint = {
 }
 
 import { useEffect, useRef, useState } from 'react';
+import { getCookie } from '@/lib/util/cookie';
 export default function VideoArea() {
     const [shouldShowInfo, setShouldShowInfo] = useState<boolean>(false);
     const [shouldFlash, setShouldFlash] = useState<boolean>(false);
@@ -100,8 +101,13 @@ export default function VideoArea() {
     }, [myStream])
 
     useEffect(() => {
-        const socket = io("http://localhost:4000");
-        console.log(socket);
+        const socket = io("http://localhost:4000", {
+            auth: {
+                token: getCookie('token'),
+            }
+        });
+
+        return () => { socket.disconnect() }
     }, [])
 
     return (

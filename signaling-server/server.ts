@@ -1,7 +1,7 @@
 import express from 'express';
 import { Server } from 'socket.io';
-//import cors from 'cors';
 import http from 'http';
+import { verifyJWT } from './jwt';
 
 const PORT = process.env.SIGNAL_PORT;
 
@@ -20,8 +20,21 @@ const io = new Server(server, {
 });
 
 
-io.on('connection', (socket) => {
-    console.log('socket connection');
+io.on('connection', async (socket) => {
+    const token = socket.handshake.auth.token;
+    if(!token) {
+        socket.disconnect();
+        return
+    }
+
+    const verToken = await verifyJWT(token);
+    if(!verToken) {
+        socket.disconnect();
+        return;
+    }
+
+    const { username } = verToken.payload;
+    console.log(username);
 })
 
 server.listen(PORT, () => {
