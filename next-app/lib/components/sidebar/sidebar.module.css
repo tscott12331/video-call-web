@@ -31,8 +31,20 @@
 .addFriendWrapper {
     width: 30px;
     height: 30px;
-    
-    border: 1px solid black;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 7.5px;
+}
+
+.addFriendWrapper:hover {
+    background: lightgrey;
+}
+
+.addFriendWrapper img {
+    width: 80%;
 }
 
 .sbSearchWrapper {
@@ -47,12 +59,6 @@
 .sbSearch {
     width: 75%;
     height: 80%;
-    font-family: inherit;
-    font-size: 1rem;
-    padding: 2px;
-
-    border: none;
-    outline: none;
 }
 
 .sbSearchBut {

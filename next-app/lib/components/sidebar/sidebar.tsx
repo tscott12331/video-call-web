@@ -1,12 +1,22 @@
 import styles from "./sidebar.module.css";
 
-export default function Sidebar() {
+interface SidebarProps {
+    onAddFriendClick?: () => void;
+}
+
+export default function Sidebar({
+    onAddFriendClick,
+}: SidebarProps) {
     return (
         <section className={styles.sbSection}>
             <div className={styles.sbCtrls}>
                 <div className={styles.sbCtrlsTop}>
                     <div className={styles.pfpWrapper}></div>
-                    <div className={styles.addFriendWrapper}></div>
+                    <div className={styles.addFriendWrapper}
+                    onClick={onAddFriendClick}
+                    >
+                        <img src="/plus.svg" />
+                    </div>
                 </div>
                 <div className={styles.sbSearchWrapper}>
                     <input placeholder="search friends" className={styles.sbSearch} />
@@ -14,6 +24,5 @@ export default function Sidebar() {
                 </div>
             </div>
             <div className={styles.sbFriendsList}></div>
-        </section>
-    );
+        </section>);
 }
