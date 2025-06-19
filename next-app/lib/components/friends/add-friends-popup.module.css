@@ -1,0 +1,117 @@
+.wrapper {
+    --wrapper-min-width: 400px;
+    --wrapper-min-height: 400px;
+    --wrapper-max-width: 800px;
+    --wrapper-max-height: 800px;
+    --wrapper-pref-width: 50%;
+    --wrapper-pref-height: 50%;
+    --wrapper-width: max(var(--wrapper-min-width), min(var(--wrapper-pref-width), var(--wrapper-max-width)));
+    --wrapper-height: max(var(--wrapper-min-height), min(var(--wrapper-pref-height), var(--wrapper-max-height)));
+
+    position: absolute;
+    top: calc(50% - ((var(--wrapper-height)) / 2));
+    left: calc(50% - ((var(--wrapper-width)) / 2));
+
+    width: max(var(--wrapper-min-width), min(var(--wrapper-pref-width), var(--wrapper-max-width)));
+    height: max(var(--wrapper-min-height), min(var(--wrapper-pref-height), var(--wrapper-max-height)));
+    
+    border: 1px solid grey;
+    border-radius: 10px;
+    background: darkgray;
+
+    box-shadow: 0px 0px 5px 1px black;
+}
+
+.searchArea {
+    height: 10%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.searchWrapper {
+    width: 80%;
+    --search-wrapper-height: 1.5rem;
+    height: var(--search-wrapper-height);
+    border-bottom: 1px solid black;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.searchWrapper input {
+    width: calc(100% - var(--search-wrapper-height));
+    background: none;
+}
+
+.searchWrapper > button {
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    background: none;
+    border: none;
+    border-radius: 5px;
+}
+
+.searchWrapper > button:hover {
+    background: lightgrey;
+}
+
+.searchIconWrapper:hover {
+    background: grey;
+}
+
+.friendArea {
+    height: 90%;
+    padding: 5px 2px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    overflow-y: auto;
+    scrollbar-color: lightgrey transparent;
+    scrollbar-width: thin;
+    scrollbar-gutter: stable both-edges;
+}
+
+.friendWrapper {
+    height: 75px;
+    padding: 5px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    box-shadow: 0px 1px 5px 1px black;
+    border-radius: 15px;
+}
+
+.friendWrapper button {
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+}
+
+.friendWrapperLeft {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.friendWrapper button > img {
+    width: 100%;
+}
+
+.pfpIconWrapper {
+    width: 50px;
+    height: 50px;
+
+    border: 1px solid black;
+    border-radius: 25px;
+}
+
+.friendUsername {
+    font-size: 1.2rem;
+}
