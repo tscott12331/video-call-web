@@ -1,0 +1,163 @@
+{
+  "id": "91e3285b-976d-4b42-aa2d-bea91442a6af",
+  "prevId": "03836925-409d-4258-97d7-ce59f9924a7d",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.UserCredential": {
+      "name": "UserCredential",
+      "schema": "",
+      "columns": {
+        "Username": {
+          "name": "Username",
+          "type": "varchar(32)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "Password": {
+          "name": "Password",
+          "type": "char(60)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "UserCredential_Username_UserProfile_Username_fk": {
+          "name": "UserCredential_Username_UserProfile_Username_fk",
+          "tableFrom": "UserCredential",
+          "tableTo": "UserProfile",
+          "columnsFrom": [
+            "Username"
+          ],
+          "columnsTo": [
+            "Username"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.UserFriend": {
+      "name": "UserFriend",
+      "schema": "",
+      "columns": {
+        "UserProfile_Username": {
+          "name": "UserProfile_Username",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "AddedProfile_Username": {
+          "name": "AddedProfile_Username",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "IsAccepted": {
+          "name": "IsAccepted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "UserFriend_UserProfile_Username_UserProfile_Username_fk": {
+          "name": "UserFriend_UserProfile_Username_UserProfile_Username_fk",
+          "tableFrom": "UserFriend",
+          "tableTo": "UserProfile",
+          "columnsFrom": [
+            "UserProfile_Username"
+          ],
+          "columnsTo": [
+            "Username"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "UserFriend_AddedProfile_Username_UserProfile_Username_fk": {
+          "name": "UserFriend_AddedProfile_Username_UserProfile_Username_fk",
+          "tableFrom": "UserFriend",
+          "tableTo": "UserProfile",
+          "columnsFrom": [
+            "AddedProfile_Username"
+          ],
+          "columnsTo": [
+            "Username"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "UserFriend_UserProfile_Username_AddedProfile_Username_pk": {
+          "name": "UserFriend_UserProfile_Username_AddedProfile_Username_pk",
+          "columns": [
+            "UserProfile_Username",
+            "AddedProfile_Username"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.UserProfile": {
+      "name": "UserProfile",
+      "schema": "",
+      "columns": {
+        "Username": {
+          "name": "Username",
+          "type": "varchar(32)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "UserBio": {
+          "name": "UserBio",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "CreatedAt": {
+          "name": "CreatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "UpdatedAt": {
+          "name": "UpdatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

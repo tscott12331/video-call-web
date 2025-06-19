@@ -8,6 +8,13 @@
       "when": 1749160749526,
       "tag": "0000_hesitant_chamber",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1750288712742,
+      "tag": "0001_stormy_princess_powerful",
+      "breakpoints": true
     }
   ]
 }
