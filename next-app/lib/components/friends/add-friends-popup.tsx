@@ -2,6 +2,7 @@ import { searchUsers } from '@/lib/server-actions/search';
 import Button from '../util/button';
 import styles from './add-friends-popup.module.css';
 import { useState } from 'react';
+import { addFriend } from '@/lib/server-actions/friend';
 
 type SimpleUser = {
     username: string;
@@ -24,6 +25,14 @@ export default function AddFriendsPopup() {
 
     const handleSearch = async () => {
         setUserList(await searchUsers(searchPhrase));
+    }
+
+    const handleFriendAction = async (friendUsername: string) => {
+        try {
+            console.log(await addFriend(friendUsername));
+        } catch(err) {
+            console.error(err);
+        }
     }
 
     return (
@@ -51,7 +60,9 @@ export default function AddFriendsPopup() {
                             <div className={styles.pfpIconWrapper}></div>
                             <p className={styles.friendUsername}>{user.username}</p>
                         </div>
-                        <Button>
+                        <Button
+                        onClick={() => handleFriendAction(user.username)}
+                        >
                             <img src='/plus.svg' />
                         </Button>
                     </div>
