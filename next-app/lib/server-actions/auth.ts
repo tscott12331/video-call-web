@@ -4,7 +4,7 @@ import { UserProfileTable, UserCredentialTable } from '../db/schemas/user';
 import { db } from '../db/db';
 import { eq } from 'drizzle-orm';
 import { cookies } from 'next/headers';
-import { createSignedJWT } from '../auth/jwt';
+import { createSignedJWT, verifyJWT } from '../auth/jwt';
 import { redirect } from 'next/navigation';
 
 export async function login(prevState: unknown, formData: FormData) {
@@ -68,5 +68,24 @@ export async function signup(prevState: unknown, formData: FormData) {
         return { error: "Server error" };
     } finally {
         redirect('/');
+    }
+}
+
+export const authenticateUser = async () => {
+    try {
+        const tokenCookie = (await cookies()).get('token');
+        if(!tokenCookie) return { error: "Not logged in" };
+
+        const token = tokenCookie.value;
+        const tokenValue = await verifyJWT(token);
+        if(!tokenValue || !tokenValue.payload.username) return { error: "Not logged in" };
+
+        return {
+            success: true,
+            username: tokenValue.payload.username as string
+        };
+    } catch(err) {
+        console.error(err);
+        return { error: "Server error" };
     }
 }

@@ -2,10 +2,11 @@ import { searchUsers } from '@/lib/server-actions/search';
 import Button from '../util/button';
 import styles from './add-friends-popup.module.css';
 import { useState } from 'react';
-import { addFriend } from '@/lib/server-actions/friend';
+import { friendAction } from '@/lib/server-actions/friend';
 
 type SimpleUser = {
     username: string;
+    friendStatus: "unadded" | "pending" | "added";
 }
 
 export default function AddFriendsPopup() {
@@ -24,12 +25,25 @@ export default function AddFriendsPopup() {
     }
 
     const handleSearch = async () => {
-        setUserList(await searchUsers(searchPhrase));
+        try {
+            const list = await searchUsers(searchPhrase);
+            const newUserList: SimpleUser[] = list.map(user => ({
+                username: user.username,
+                friendStatus: user.requestIsAccepted === null ?
+                                "unadded" :
+                                user.requestIsAccepted ?
+                                "added" :
+                                "pending"
+            }))
+            setUserList(newUserList);
+        } catch(err) {
+            console.error(err);
+        }
     }
 
     const handleFriendAction = async (friendUsername: string) => {
         try {
-            console.log(await addFriend(friendUsername));
+            console.log(await friendAction(friendUsername));
         } catch(err) {
             console.error(err);
         }
@@ -63,7 +77,11 @@ export default function AddFriendsPopup() {
                         <Button
                         onClick={() => handleFriendAction(user.username)}
                         >
-                            <img src='/plus.svg' />
+                            <img src={user.friendStatus === "unadded" ?
+                                        '/plus.svg' :
+                                        user.friendStatus === "pending" ?
+                                        '/pending.svg' :
+                                        '/added.svg' } />
                         </Button>
                     </div>
                 )

@@ -1,6 +1,6 @@
 "use server";
 
-import { and, eq, ilike, not } from "drizzle-orm";
+import { and, eq, ilike, not, or } from "drizzle-orm";
 import { db } from "../db/db";
 import { UserFriendTable, UserProfileTable } from "../db/schemas/user";
 import { cookies } from "next/headers";
@@ -22,9 +22,17 @@ export async function searchUsers(phrase: string, limit: number = 10, offset: nu
             requestIsAccepted: UserFriendTable.IsAccepted,
         }).from(UserProfileTable)
         .leftJoin(UserFriendTable,
-                  and(
+                  or(
+                    and(
                       eq(UserFriendTable.UserProfile_Username, username),
-                      eq(UserProfileTable.Username, UserFriendTable.AddedProfile_Username))
+                      eq(UserProfileTable.Username, UserFriendTable.AddedProfile_Username)
+                    ),
+                    and(
+                      eq(UserFriendTable.AddedProfile_Username, username),
+                      eq(UserProfileTable.Username, UserFriendTable.UserProfile_Username)
+                    )
+                  )
+                  
                  )
                  .where(
                      and(
@@ -34,6 +42,7 @@ export async function searchUsers(phrase: string, limit: number = 10, offset: nu
                  .limit(limit)
                  .offset(offset);
 
+            console.log(userList);
          return userList;
          //return userList.filter((user) => user.username !== username)
     } catch(err) {
