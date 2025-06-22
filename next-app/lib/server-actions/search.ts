@@ -42,9 +42,7 @@ export async function searchUsers(phrase: string, limit: number = 10, offset: nu
                  .limit(limit)
                  .offset(offset);
 
-            console.log(userList);
          return userList;
-         //return userList.filter((user) => user.username !== username)
     } catch(err) {
         console.error(err);
         return [];

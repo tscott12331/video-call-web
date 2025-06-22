@@ -1,7 +1,7 @@
 import { searchUsers } from '@/lib/server-actions/search';
 import Button from '../util/button';
 import styles from './add-friends-popup.module.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { friendAction } from '@/lib/server-actions/friend';
 
 type SimpleUser = {
@@ -24,9 +24,15 @@ export default function AddFriendsPopup() {
         }
     }
 
-    const handleSearch = async () => {
+    const handleSearch = () => {
+        const trimmedPhrase = searchPhrase.trim();
+        if(trimmedPhrase.length === 0) return;
+        search(trimmedPhrase)
+    }
+
+    const search = async (phrase: string) => {
         try {
-            const list = await searchUsers(searchPhrase);
+            const list = await searchUsers(phrase);
             const newUserList: SimpleUser[] = list.map(user => ({
                 username: user.username,
                 friendStatus: user.requestIsAccepted === null ?
@@ -48,6 +54,10 @@ export default function AddFriendsPopup() {
             console.error(err);
         }
     }
+
+    useEffect(() => {
+        search("");
+    }, [])
 
     return (
         <div className={styles.wrapper}>
