@@ -47,9 +47,20 @@ export default function AddFriendsPopup() {
         }
     }
 
-    const handleFriendAction = async (friendUsername: string) => {
+    const handleFriendAction = async (friend: SimpleUser) => {
         try {
-            console.log(await friendAction(friendUsername));
+            const res = await friendAction(friend.username);
+            if(res.success) {
+                const userIndex = userList.indexOf(friend);
+                if(userIndex === -1) return;
+                const nextStatus = friend.friendStatus === "unadded" ?
+                                    "pending" :
+                                    "added";
+                setUserList([...userList.slice(0, userIndex), 
+                            { username: friend.username,
+                            friendStatus: nextStatus },
+                            ...userList.slice(userIndex + 1, userList.length)]);
+            }
         } catch(err) {
             console.error(err);
         }
@@ -85,7 +96,7 @@ export default function AddFriendsPopup() {
                             <p className={styles.friendUsername}>{user.username}</p>
                         </div>
                         <Button
-                        onClick={() => handleFriendAction(user.username)}
+                        onClick={() => handleFriendAction(user)}
                         >
                             <img src={user.friendStatus === "unadded" ?
                                         '/plus.svg' :

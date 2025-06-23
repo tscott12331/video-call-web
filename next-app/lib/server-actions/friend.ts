@@ -44,7 +44,7 @@ export async function friendAction(friendUsername: string) {
             } else {
                 return { error: "Friend request already accepted" };
             }
-        } else if(relationship.username === username) { // just to be verbose
+        } else {// if(relationship.username === username) { // just to be verbose
             // we made the request, return error
             return { error: "Request already made" };
         }
