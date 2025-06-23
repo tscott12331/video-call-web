@@ -9,7 +9,7 @@ type SimpleUser = {
     friendStatus: "unadded" | "pending" | "added";
 }
 
-export default function AddFriendsPopup() {
+export default function AddFriendsPopup({ ...rest }: React.HTMLProps<HTMLDivElement>) {
     const [userList, setUserList] = useState<SimpleUser[]>([]);
     const [searchPhrase, setSearchPhrase] = useState<string>("");
 
@@ -71,7 +71,7 @@ export default function AddFriendsPopup() {
     }, [])
 
     return (
-        <div className={styles.wrapper}>
+        <div className={styles.wrapper} {...rest}>
             <div className={styles.searchArea}>
                 <div className={styles.searchWrapper}>
                     <input placeholder="search for friends" 
