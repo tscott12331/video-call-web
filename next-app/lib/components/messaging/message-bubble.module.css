@@ -1,0 +1,13 @@
+.message {
+    display: flex;
+    padding: 4px 0;
+}
+
+.messageText {
+    border-radius: 5px;
+
+    padding: 5px;
+
+    max-width: 600px;
+}
+

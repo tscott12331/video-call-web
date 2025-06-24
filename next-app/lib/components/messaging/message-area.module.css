@@ -4,9 +4,16 @@
     flex-grow: 2;
 }
 
-
 .mainMessageWrapper {
     height: calc(100% - 200px);
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+
+    overflow-y: auto;
+    scrollbar-color: lightgrey transparent;
+    scrollbar-width: thin;
+    /*scrollbar-gutter: inherit both-edges;*/
 }
 
 .mainInputWrapper {
