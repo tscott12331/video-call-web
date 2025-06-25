@@ -1,17 +1,24 @@
 import { useEffect, useState } from "react";
 import styles from "./sidebar.module.css";
 import { getFriends } from "@/lib/server-actions/friend";
+import SidebarFriendCard from "./sidebar-friend-card";
 
 interface SidebarProps {
     onAddFriendClick?: () => void;
+    onFriendMessageClick?: (friendUsername: string) => void;
+    onFriendVideoClick?: (friendUsername: string) => void;
+    selectedFriend: string|null|undefined;
 }
 
-type friend = {
+export type friend = {
     username: string;
 }
 
 export default function Sidebar({
     onAddFriendClick,
+    onFriendMessageClick,
+    onFriendVideoClick,
+    selectedFriend
 }: SidebarProps) {
     const [friendList, setFriendList] = useState<friend[]>([]);
 
@@ -45,20 +52,14 @@ export default function Sidebar({
             <div className={styles.sbFriendsList}>
             {
                 friendList.map(friend =>
-                    <div 
-                    className={styles.sbFriend}
+                    <SidebarFriendCard
+                    friend={friend}
+                    onFriendMessageClick={onFriendMessageClick}
+                    onFriendVideoClick={onFriendVideoClick}
+                    isSelected={friend.username === selectedFriend}
                     key={friend.username}
-                    >
-                        <div className={styles.sbFriendLeft}>
-                            <div className={styles.pfpSmallWrapper}></div>
-                            <p className={styles.sbFriendName}>{friend.username}</p>
-                        </div>
-                        <div className={styles.sbFriendRight}>
-                            <div className={styles.messageSmallIcon}></div>
-                            <div className={styles.videoSmallIcon}></div>
-                        </div>
-                    </div>
-                              )
+                    />
+                  )
             }
             </div>
         </section>);

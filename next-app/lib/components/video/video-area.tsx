@@ -3,15 +3,23 @@ import styles from './video-area.module.css';
 import { io } from 'socket.io-client';
 import UserInfoTopBar from '@/lib/components/user-info/user-info-top-bar';
 import CallControls from './call-controls';
+import { useEffect, useRef, useState } from 'react';
+import { getCookie } from '@/lib/util/cookie';
 
 type TMediaConstraint = {
     audio: boolean | MediaTrackConstraints;
     video: boolean | MediaTrackConstraints;
 }
 
-import { useEffect, useRef, useState } from 'react';
-import { getCookie } from '@/lib/util/cookie';
-export default function VideoArea() {
+interface VideoAreaProps {
+    friendUsername: string;
+    onMessageClick?: () => void;
+}
+
+export default function VideoArea({
+    friendUsername,
+    onMessageClick,
+}: VideoAreaProps) {
     const [shouldShowInfo, setShouldShowInfo] = useState<boolean>(false);
     const [shouldFlash, setShouldFlash] = useState<boolean>(false);
     const [shouldMaintain, setShouldMaintain] = useState<boolean>(false);
@@ -119,6 +127,8 @@ export default function VideoArea() {
             onMouseEnter={maintainControls}
             onMouseLeave={resetFlash}
             visible={shouldShowInfo}
+            username={friendUsername}
+            onControlClick={onMessageClick}
             />
             <video ref={myVideoFeed} autoPlay={true}>cannot display video</video>
             <CallControls 

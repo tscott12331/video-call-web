@@ -1,0 +1,52 @@
+.sbFriend {
+    height: 50px;
+    border-bottom: 1px solid black;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+}
+
+.sbFriend[data-selected="true"] {
+    background-color: darkgrey;
+}
+
+.sbFriend[data-selected="false"]:hover {
+    background-color: lightgrey;
+}
+
+.sbFriendLeft {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.pfpSmallWrapper {
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+    border: 1px solid black;
+
+}
+
+.sbFriendRight {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    gap: 5px;
+}
+
+.messageSmallIcon {
+    width: 15px;
+    height: 15px;
+
+    border: 1px solid black;
+}
+
+.videoSmallIcon {
+    width: 15px;
+    height: 15px;
+
+    border: 1px solid black;
+}
+

@@ -2,10 +2,21 @@ import styles from "./message-area.module.css";
 import UserInfoTopBar from "@/lib/components/user-info/user-info-top-bar";
 import MessageBubble from "./message-bubble";
 
-export default function MessageArea() {
+interface MessageAreaProps {
+    friendUsername: string;
+    onVideoClick?: () => void;
+}
+
+export default function MessageArea({
+    friendUsername,
+    onVideoClick
+}: MessageAreaProps) {
     return (
         <section className={styles.mainSection}>
-            <UserInfoTopBar />
+            <UserInfoTopBar 
+            username={friendUsername}
+            onControlClick={onVideoClick}
+            />
             <div className={styles.mainMessageWrapper}>
                 <MessageBubble
                 type="outgoing"

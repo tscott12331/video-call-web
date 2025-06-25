@@ -3,11 +3,15 @@ import styles from './user-info-top-bar.module.css';
 interface UserInfoTopBarProps {
     absolutePosition?: 'top' | 'bottom';
     visible?: boolean;
+    username: string;
+    onControlClick?: () => void;
 }
 
 export default function UserInfoTopBar({
     absolutePosition,
     visible = true,
+    username,
+    onControlClick,
     ...rest
 }: UserInfoTopBarProps & React.HTMLAttributes<HTMLDivElement>) {
     return (
@@ -34,9 +38,12 @@ export default function UserInfoTopBar({
         >
             <div className={styles.mainIconTextWrapper}>
                 <div className={styles.pfpBigIcon}></div>
-                <p className={styles.infoUsername}>User Name</p>
+                <p className={styles.infoUsername}>{username}</p>
             </div>
-            <div className={styles.videoBigIcon}></div>
+            <div 
+            className={styles.bigIcon}
+            onClick={() => onControlClick?.()}
+            ></div>
         </div>
     )
 }
