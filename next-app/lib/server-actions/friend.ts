@@ -1,16 +1,18 @@
 "use server";
 
-import { cookies } from "next/headers";
 import { db } from "../db/db";
 import { UserFriendTable, UserProfileTable } from "../db/schemas/user";
-import { verifyJWT } from "../auth/jwt";
 import { and, eq, not, or } from "drizzle-orm";
 import { authenticateUser } from "./auth";
+import { friend } from "../components/sidebar/sidebar";
 
 export async function friendAction(friendUsername: string) {
     try {
         const authRes = await authenticateUser();
-        if(!authRes.success) return { error: authRes.error };
+        if(!authRes.success || !authRes.username) return { 
+            error: authRes.error,
+            success: false,
+        };
 
         const { username } = authRes;
         const existingRelationship = await db.select({
@@ -42,23 +44,38 @@ export async function friendAction(friendUsername: string) {
                 // accept request
                 return await acceptFriend(friendUsername);
             } else {
-                return { error: "Friend request already accepted" };
+                return { 
+                    error: "Friend request already accepted",
+                    success: false,
+                };
             }
         } else {// if(relationship.username === username) { // just to be verbose
             // we made the request, return error
-            return { error: "Request already made" };
+            return { 
+                error: "Request already made",
+                success: false,
+            };
         }
     } catch(err) {
         console.error(err);
-        return { error: "Server error" };
+        return { 
+            error: "Server error",
+            success: false,
+        };
     }
 }
 
 export async function addFriend(friendUsername: string) {
-    if(!friendUsername) return { error: "Not a valid user to add" };
+    if(!friendUsername) return { 
+        error: "Not a valid user to add",
+        success: false,
+    };
     try {
         const authRes = await authenticateUser();
-        if(!authRes.success) return { error: authRes.error };
+        if(!authRes.success || !authRes.username) return { 
+            error: authRes.error,
+            success: false,
+        };
 
         const { username } = authRes;
         await db.insert(UserFriendTable).values({
@@ -71,14 +88,20 @@ export async function addFriend(friendUsername: string) {
 
     } catch(err) {
         console.error(err);
-        return { error: "Server error" };
+        return { 
+            error: "Server error",
+            success: false,
+        };
     }
 }
 
 export async function acceptFriend(friendUsername: string) {
     try {
         const authRes = await authenticateUser();
-        if(!authRes.success) return { error: authRes.error };
+        if(!authRes.success || !authRes.username) return { 
+            error: authRes.error,
+            success: false,
+        };
 
         const { username } = authRes;
 
@@ -92,7 +115,10 @@ export async function acceptFriend(friendUsername: string) {
         return { success: true } 
     } catch(err) {
         console.error(err);
-        return { error: "Server error" };
+        return { 
+            error: "Server error",
+            success: false,
+        };
     }
 }
 
@@ -103,11 +129,14 @@ export async function removeFriend(friendUsername: string) {
 export async function getFriends(limit: number = 10, offset: number = 0) {
     try {
         const authRes = await authenticateUser();
-        if(!authRes.success) return { error: authRes.error };
+        if(!authRes.success || !authRes.username) return { 
+            error: authRes.error,
+            success: false,
+        };
 
         const { username } = authRes;
 
-        const friendList = await db.select({
+        const friendList: friend[] = await db.select({
             username: UserProfileTable.Username,
         })
             .from(UserProfileTable)
@@ -133,10 +162,13 @@ export async function getFriends(limit: number = 10, offset: number = 0) {
 
             return {
                 success: true,
-                friendList
+                friendList,
             }
     } catch(err) {
         console.error(err);
-        return { error: "Server error" };
+        return { 
+            error: "Server error",
+            success: false,
+        };
     }
 }

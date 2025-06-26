@@ -24,7 +24,7 @@ export default function Sidebar({
 
     const initFriendList = async () => {
         const list = await getFriends();
-        if(list.success) {
+        if(list.success && list.friendList) {
             setFriendList(list.friendList);
         }
     }

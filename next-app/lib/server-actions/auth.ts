@@ -10,7 +10,10 @@ import { redirect } from 'next/navigation';
 export async function login(prevState: unknown, formData: FormData) {
     const username = formData.get('username')?.toString();
     const password = formData.get('password')?.toString();
-    if(!username || !password) return { error: "Missing required field" };
+    if(!username || !password) return { 
+        error: "Missing required field",
+        success: false,
+    };
     
     try {
         const pwdArray = await db.select({
@@ -23,7 +26,8 @@ export async function login(prevState: unknown, formData: FormData) {
         
         if(!await bcrypt.compare(password, pwdArray[0].Password)) {
             return {
-                error: "Incorrect username or password"
+                error: "Incorrect username or password",
+                success: false,
             };
         }
 
@@ -31,7 +35,10 @@ export async function login(prevState: unknown, formData: FormData) {
         (await cookies()).set('token', await createSignedJWT(username));
     } catch(error) {
         console.error(error);
-        return { error: "Server error" };
+        return { 
+            error: "Server error",
+            success: false,
+        };
     }
     redirect('/');
 }
@@ -39,7 +46,10 @@ export async function login(prevState: unknown, formData: FormData) {
 export async function signup(prevState: unknown, formData: FormData) {
     const username = formData.get('username')?.toString();
     const password = formData.get('password')?.toString();
-    if(!username || !password) return { error: "Missing required field" };
+    if(!username || !password) return { 
+        error: "Missing required field",
+        success: false
+    };
     
     try {
         const userList = await db.select().from(UserProfileTable)
@@ -47,7 +57,8 @@ export async function signup(prevState: unknown, formData: FormData) {
         
         if(userList.length > 0) {
             return { 
-                error: "Username is taken"
+                error: "Username is taken",
+                success: false,
             };
         }
         
@@ -65,7 +76,10 @@ export async function signup(prevState: unknown, formData: FormData) {
 
     } catch(error) {
         console.error(error);
-        return { error: "Server error" };
+        return { 
+            error: "Server error",
+            success: false,
+        };
     } finally {
         redirect('/');
     }
@@ -74,11 +88,17 @@ export async function signup(prevState: unknown, formData: FormData) {
 export const authenticateUser = async () => {
     try {
         const tokenCookie = (await cookies()).get('token');
-        if(!tokenCookie) return { error: "Not logged in" };
+        if(!tokenCookie) return { 
+            error: "Not logged in",
+            success: false,
+        };
 
         const token = tokenCookie.value;
         const tokenValue = await verifyJWT(token);
-        if(!tokenValue || !tokenValue.payload.username) return { error: "Not logged in" };
+        if(!tokenValue || !tokenValue.payload.username) return { 
+            error: "Not logged in" ,
+            success: false,
+        };
 
         return {
             success: true,
@@ -86,6 +106,9 @@ export const authenticateUser = async () => {
         };
     } catch(err) {
         console.error(err);
-        return { error: "Server error" };
+        return { 
+            error: "Server error",
+            success: false,
+        };
     }
 }
