@@ -5,7 +5,7 @@ import Sidebar from "@/lib/components/sidebar/sidebar";
 import MessageArea from "@/lib/components/messaging/message-area";
 import VideoArea from "@/lib/components/video/video-area";
 import AddFriendsPopup from "@/lib/components/friends/add-friends-popup";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 enum MAIN_AREA {
     NONE,
@@ -58,6 +58,29 @@ export default function Home() {
                 />
         }
     }
+
+    useEffect(() => {
+        const evtSrc = new EventSource('http://localhost:5000/chat-listen');
+
+        const onSSEMessage = (e: MessageEvent) => {
+            console.log(e);
+        }
+
+        const onSSEError = (e: Event) => {
+            console.log(e);
+            evtSrc.close();
+        }
+
+        evtSrc.onmessage = onSSEMessage;
+
+        evtSrc.onerror = onSSEError;
+        
+        return () => {
+            evtSrc.removeEventListener('message', onSSEMessage);
+            evtSrc.removeEventListener('error', onSSEError);
+            evtSrc.close();
+        }
+    }, []);
 
     return (
         <div className={styles.page}
