@@ -6,6 +6,7 @@ import MessageArea from "@/lib/components/messaging/message-area";
 import VideoArea from "@/lib/components/video/video-area";
 import AddFriendsPopup from "@/lib/components/friends/add-friends-popup";
 import { useEffect, useState } from "react";
+import { SSE_URL } from "@/endpoints";
 
 enum MAIN_AREA {
     NONE,
@@ -60,7 +61,7 @@ export default function Home() {
     }
 
     useEffect(() => {
-        const evtSrc = new EventSource('http://localhost:5000/chat-listen');
+        const evtSrc = new EventSource(`${SSE_URL}/chat-listen`);
 
         const onSSEMessage = (e: MessageEvent) => {
             console.log(e);

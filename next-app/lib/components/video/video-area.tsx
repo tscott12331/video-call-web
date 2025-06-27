@@ -5,6 +5,7 @@ import UserInfoTopBar from '@/lib/components/user-info/user-info-top-bar';
 import CallControls from './call-controls';
 import { useEffect, useRef, useState } from 'react';
 import { getCookie } from '@/lib/util/cookie';
+import { SIGNALING_URL } from '@/endpoints';
 
 type TMediaConstraint = {
     audio: boolean | MediaTrackConstraints;
@@ -109,7 +110,7 @@ export default function VideoArea({
     }, [myStream])
 
     useEffect(() => {
-        const socket = io("http://localhost:4000", {
+        const socket = io(SIGNALING_URL, {
             auth: {
                 token: getCookie('token'),
             }

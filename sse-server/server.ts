@@ -21,7 +21,7 @@ app.get('/chat-listen', async (req, res) => {
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
 
-    res.write(`data: hello world ${i}\n\n`);
+    res.write(`data: hello world\n\n`);
 
     res.end();
 })
