@@ -1,4 +1,5 @@
-import { pgTable, varchar, char, timestamp, boolean, primaryKey } from "drizzle-orm/pg-core";
+import { pgTable, varchar, char, timestamp, boolean, primaryKey, uuid } from "drizzle-orm/pg-core";
+import { ChatRoomTable } from "./chat";
 
 export const UserProfileTable = pgTable("UserProfile", {
     Username: varchar("Username", { length: 32 }).notNull().primaryKey(),
@@ -15,7 +16,8 @@ export const UserCredentialTable = pgTable("UserCredential", {
 export const UserFriendTable = pgTable("UserFriend", {
     UserProfile_Username: varchar("UserProfile_Username", { length: 32 }).notNull().references(() => UserProfileTable.Username),
     AddedProfile_Username: varchar("AddedProfile_Username", { length: 32 }).notNull().references(() => UserProfileTable.Username),
-    IsAccepted: boolean("IsAccepted").notNull()
+    IsAccepted: boolean("IsAccepted").notNull(),
+    ChatRoomId: uuid('ChatRoomId').references(() => ChatRoomTable.ChatRoomId),
 }, (table) => [
         primaryKey({ columns: [table.UserProfile_Username, table.AddedProfile_Username]})
     ]

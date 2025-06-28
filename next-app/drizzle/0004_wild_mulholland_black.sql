@@ -1,0 +1,2 @@
+ALTER TABLE "UserFriend" ADD COLUMN "ChatRoomId" uuid;--> statement-breakpoint
+ALTER TABLE "UserFriend" ADD CONSTRAINT "UserFriend_ChatRoomId_ChatRoom_ChatRoomId_fk" FOREIGN KEY ("ChatRoomId") REFERENCES "public"."ChatRoom"("ChatRoomId") ON DELETE no action ON UPDATE no action;
