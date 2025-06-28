@@ -61,7 +61,9 @@ export default function Home() {
     }
 
     useEffect(() => {
-        const evtSrc = new EventSource(`${SSE_URL}/chat-listen`);
+        const evtSrc = new EventSource(`${SSE_URL}/chat-listen`, {
+            withCredentials: true
+        });
 
         const onSSEMessage = (e: MessageEvent) => {
             console.log(e);
