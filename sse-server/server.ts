@@ -3,6 +3,8 @@ import http from 'http';
 import cors from 'cors';
 import { getCookie } from './util/cookie';
 import { verifyJWT } from './util/auth';
+import { db } from './db/db';
+import { UserProfileTable } from './db/schemas/user';
 
 const PORT = process.env.SSE_PORT;
 
@@ -29,7 +31,6 @@ app.get('/chat-listen', async (req, res) => {
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
-
 
     res.write(`data: hello world\n\n`);
 
