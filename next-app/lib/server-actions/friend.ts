@@ -5,7 +5,7 @@ import { UserFriendTable, UserProfileTable } from "../db/schemas/user";
 import { and, eq, not, or } from "drizzle-orm";
 import { authenticateUser } from "./auth";
 import { friend } from "../components/sidebar/sidebar";
-import { ChatRoomTable } from "../db/schemas/chat";
+import { ChatRoomTable, UserProfile_ChatRoom } from "../db/schemas/chat";
 
 export async function friendAction(friendUsername: string) {
     try {
@@ -107,6 +107,17 @@ export async function acceptFriend(friendUsername: string) {
         const { username } = authRes;
 
         const friendRoomId = (await db.insert(ChatRoomTable).values({}).returning({ id: ChatRoomTable.ChatRoomId }))[0].id;
+
+        await db.insert(UserProfile_ChatRoom).values([
+            {
+                Username: username,
+                ChatRoomId: friendRoomId,
+            },
+            {
+                Username: friendUsername,
+                ChatRoomId: friendRoomId,
+            }
+        ]);
 
         await db.update(UserFriendTable).set({
             IsAccepted: true,
