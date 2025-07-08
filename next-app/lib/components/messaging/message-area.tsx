@@ -1,148 +1,88 @@
 import styles from "./message-area.module.css";
 import UserInfoTopBar from "@/lib/components/user-info/user-info-top-bar";
 import MessageBubble from "./message-bubble";
+import { useState } from "react";
+import { Friend } from "../sidebar/sidebar";
+import { getCookie } from "@/lib/util/cookie";
+import { TChatMessage } from "@/app/page";
+import { ChatMessage } from "@/lib/db/schemas/chat";
 
 interface MessageAreaProps {
-    friendUsername: string;
+    friend: Friend;
+    username: string;
     onVideoClick?: () => void;
+    onMessageSend?: (message: TChatMessage) => void;
+    messages?: TChatMessage[];
 }
 
 export default function MessageArea({
-    friendUsername,
-    onVideoClick
+    friend,
+    onVideoClick,
+    onMessageSend,
+    messages,
+    username,
 }: MessageAreaProps) {
+    const [messageText, setMessageText] = useState<string>("");
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if(e.key === "Enter") {
+            e.preventDefault();
+            sendMessage();
+        }
+    }
+
+    const sendMessage = async () => {
+        try {
+            const token = getCookie('token');
+            if(!token) return;
+            const res = await fetch("http://localhost:5000/send-message", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Bearer': token,
+                },
+                body: JSON.stringify({
+                    Content: messageText,
+                    ChatRoomId: friend.roomId,
+                }),
+            })
+
+            if(!res.ok) return;
+            const newMessage: TChatMessage = await res.json();
+
+            onMessageSend?.(newMessage);
+        } catch(err) {
+            console.error(err);
+        }
+    }
+
     return (
         <section className={styles.mainSection}>
             <UserInfoTopBar 
-            username={friendUsername}
+            username={friend.username}
             onControlClick={onVideoClick}
             />
             <div className={styles.mainMessageWrapper}>
-                <MessageBubble
-                type="outgoing"
-                text="really long message"
-                />
-                <MessageBubble
-                type="outgoing"
-                text="really long messagesldfjsdlfja;sdjfa;sldjfasd lfja;sljfas; fj a;lskdjf ;lasjd f;lasjd f;laksjd f;laksjdf ;alskdjf a;sldkjf;aslkdjf ;alskdjf ;asdlfkj a;sdlfjk"
-                />
-                <MessageBubble
-                type="incoming"
-                text="rreally long messagesldfjsdlfja;sdjfa;sldjfasd lfja;sljfas; fj a;lskdjf ;lasjd f;lasjd f;laksjd f;laksjdf ;alskdjf a;sldkjf;aslkdjf ;alskdjf ;asdlfkj a;sdlfjkeally long message"
-                />
-                <MessageBubble
-                type="outgoing"
-                text="really long message"
-                />
-                <MessageBubble
-                type="incoming"
-                text="really long message"
-                />
-                <MessageBubble
-                type="outgoing"
-                text="really long message"
-                />
-                <MessageBubble
-                type="outgoing"
-                text="really long messagesldfjsdlfja;sdjfa;sldjfasd lfja;sljfas; fj a;lskdjf ;lasjd f;lasjd f;laksjd f;laksjdf ;alskdjf a;sldkjf;aslkdjf ;alskdjf ;asdlfkj a;sdlfjk"
-                />
-                <MessageBubble
-                type="incoming"
-                text="rreally long messagesldfjsdlfja;sdjfa;sldjfasd lfja;sljfas; fj a;lskdjf ;lasjd f;lasjd f;laksjd f;laksjdf ;alskdjf a;sldkjf;aslkdjf ;alskdjf ;asdlfkj a;sdlfjkeally long message"
-                />
-                <MessageBubble
-                type="outgoing"
-                text="really long message"
-                />
-                <MessageBubble
-                type="incoming"
-                text="really long message"
-                />
-                <MessageBubble
-                type="outgoing"
-                text="really long message"
-                />
-                <MessageBubble
-                type="outgoing"
-                text="really long messagesldfjsdlfja;sdjfa;sldjfasd lfja;sljfas; fj a;lskdjf ;lasjd f;lasjd f;laksjd f;laksjdf ;alskdjf a;sldkjf;aslkdjf ;alskdjf ;asdlfkj a;sdlfjk"
-                />
-                <MessageBubble
-                type="incoming"
-                text="rreally long messagesldfjsdlfja;sdjfa;sldjfasd lfja;sljfas; fj a;lskdjf ;lasjd f;lasjd f;laksjd f;laksjdf ;alskdjf a;sldkjf;aslkdjf ;alskdjf ;asdlfkj a;sdlfjkeally long message"
-                />
-                <MessageBubble
-                type="outgoing"
-                text="really long message"
-                />
-                <MessageBubble
-                type="incoming"
-                text="really long message"
-                />
-                <MessageBubble
-                type="outgoing"
-                text="really long message"
-                />
-                <MessageBubble
-                type="outgoing"
-                text="really long messagesldfjsdlfja;sdjfa;sldjfasd lfja;sljfas; fj a;lskdjf ;lasjd f;lasjd f;laksjd f;laksjdf ;alskdjf a;sldkjf;aslkdjf ;alskdjf ;asdlfkj a;sdlfjk"
-                />
-                <MessageBubble
-                type="incoming"
-                text="rreally long messagesldfjsdlfja;sdjfa;sldjfasd lfja;sljfas; fj a;lskdjf ;lasjd f;lasjd f;laksjd f;laksjdf ;alskdjf a;sldkjf;aslkdjf ;alskdjf ;asdlfkj a;sdlfjkeally long message"
-                />
-                <MessageBubble
-                type="outgoing"
-                text="really long message"
-                />
-                <MessageBubble
-                type="incoming"
-                text="really long message"
-                />
-                <MessageBubble
-                type="outgoing"
-                text="really long message"
-                />
-                <MessageBubble
-                type="outgoing"
-                text="really long messagesldfjsdlfja;sdjfa;sldjfasd lfja;sljfas; fj a;lskdjf ;lasjd f;lasjd f;laksjd f;laksjdf ;alskdjf a;sldkjf;aslkdjf ;alskdjf ;asdlfkj a;sdlfjk"
-                />
-                <MessageBubble
-                type="incoming"
-                text="rreally long messagesldfjsdlfja;sdjfa;sldjfasd lfja;sljfas; fj a;lskdjf ;lasjd f;lasjd f;laksjd f;laksjdf ;alskdjf a;sldkjf;aslkdjf ;alskdjf ;asdlfkj a;sdlfjkeally long message"
-                />
-                <MessageBubble
-                type="outgoing"
-                text="really long message"
-                />
-                <MessageBubble
-                type="incoming"
-                text="really long message"
-                />
-                <MessageBubble
-                type="outgoing"
-                text="really long message"
-                />
-                <MessageBubble
-                type="outgoing"
-                text="really long messagesldfjsdlfja;sdjfa;sldjfasd lfja;sljfas; fj a;lskdjf ;lasjd f;lasjd f;laksjd f;laksjdf ;alskdjf a;sldkjf;aslkdjf ;alskdjf ;asdlfkj a;sdlfjk"
-                />
-                <MessageBubble
-                type="incoming"
-                text="rreally long messagesldfjsdlfja;sdjfa;sldjfasd lfja;sljfas; fj a;lskdjf ;lasjd f;lasjd f;laksjd f;laksjdf ;alskdjf a;sldkjf;aslkdjf ;alskdjf ;asdlfkj a;sdlfjkeally long message"
-                />
-                <MessageBubble
-                type="outgoing"
-                text="really long message"
-                />
-                <MessageBubble
-                type="incoming"
-                text="really long message"
-                />
+                {messages?.map((message, i) => 
+                    <MessageBubble
+                    type={message.username === username ? "outgoing" : "incoming"}
+                    text={message.content}
+                    key={i}
+                    />
+                )}
             </div>
             <div className={styles.mainInputWrapper}>
-                <textarea className={styles.mainMessageInput} placeholder="write a message" />
+                <textarea 
+                className={styles.mainMessageInput} 
+                placeholder="write a message" 
+                onKeyDown={handleKeyDown}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setMessageText(e.currentTarget.value)}
+                />
                 <div className={styles.messageSendButWrapper}>
-                    <button className={styles.messageSendBut}>send</button>
+                    <button 
+                    className={styles.messageSendBut}
+                    onClick={sendMessage}
+                    >send</button>
                 </div>
             </div>
         </section>

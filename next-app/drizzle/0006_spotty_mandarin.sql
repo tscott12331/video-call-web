@@ -1,0 +1,1 @@
+ALTER TABLE "UserProfile_ChatRoom" ALTER COLUMN "ChatRoomId" SET NOT NULL;

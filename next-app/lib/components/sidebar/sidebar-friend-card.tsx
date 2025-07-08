@@ -1,10 +1,10 @@
-import { friend } from './sidebar';
+import { Friend } from './sidebar';
 import styles from './sidebar-friend-card.module.css';
 
 interface SidebarFriendCardProps {
-    onFriendMessageClick?: (friendUsername: string) => void;
-    onFriendVideoClick?: (friendUsername: string) => void;
-    friend: friend;
+    onFriendMessageClick?: (fr: Friend) => void;
+    onFriendVideoClick?: (fr: Friend) => void;
+    friend: Friend;
     isSelected: boolean;
 }
 
@@ -14,19 +14,19 @@ export default function SidebarFriendCard({
     friend,
     isSelected,
 }: SidebarFriendCardProps) {
-    const handleControlClick = (e: React.MouseEvent<HTMLDivElement>, friendUsername: string, type: 'video' | 'message') => {
+    const handleControlClick = (e: React.MouseEvent<HTMLDivElement>, type: 'video' | 'message') => {
         e.stopPropagation();
         if(type === 'message') {
-            onFriendMessageClick?.(friendUsername);
+            onFriendMessageClick?.(friend);
         } else if (type === 'video') {
-            onFriendVideoClick?.(friendUsername);
+            onFriendVideoClick?.(friend);
         }
     }
 
     return (
         <div 
         className={styles.sbFriend}
-        onClick={(e) => handleControlClick(e, friend.username, 'message')}
+        onClick={(e) => handleControlClick(e, 'message')}
         data-selected={isSelected ? "true" : "false"}
         >
             <div className={styles.sbFriendLeft}>
@@ -36,11 +36,11 @@ export default function SidebarFriendCard({
             <div className={styles.sbFriendRight}>
                 <div 
                 className={styles.messageSmallIcon}
-                onClick={(e) => handleControlClick(e, friend.username, 'message')}
+                onClick={(e) => handleControlClick(e, 'message')}
                 ></div>
                 <div 
                 className={styles.videoSmallIcon}
-                onClick={(e) => handleControlClick(e, friend.username, 'video')}
+                onClick={(e) => handleControlClick(e, 'video')}
                 ></div>
             </div>
         </div>

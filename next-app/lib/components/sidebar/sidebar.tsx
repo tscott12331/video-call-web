@@ -5,22 +5,23 @@ import SidebarFriendCard from "./sidebar-friend-card";
 
 interface SidebarProps {
     onAddFriendClick?: () => void;
-    onFriendMessageClick?: (friendUsername: string) => void;
-    onFriendVideoClick?: (friendUsername: string) => void;
-    selectedFriend: string|null|undefined;
+    onFriendMessageClick?: (fr: Friend) => void;
+    onFriendVideoClick?: (fr: Friend) => void;
+    selectedFriend: Friend|null|undefined;
 }
 
-export type friend = {
+export type Friend = {
     username: string;
+    roomId: string;
 }
 
 export default function Sidebar({
     onAddFriendClick,
     onFriendMessageClick,
     onFriendVideoClick,
-    selectedFriend
+    selectedFriend,
 }: SidebarProps) {
-    const [friendList, setFriendList] = useState<friend[]>([]);
+    const [friendList, setFriendList] = useState<Friend[]>([]);
 
     const initFriendList = async () => {
         const list = await getFriends();
@@ -56,7 +57,7 @@ export default function Sidebar({
                     friend={friend}
                     onFriendMessageClick={onFriendMessageClick}
                     onFriendVideoClick={onFriendVideoClick}
-                    isSelected={friend.username === selectedFriend}
+                    isSelected={friend.username === selectedFriend?.username}
                     key={friend.username}
                     />
                   )

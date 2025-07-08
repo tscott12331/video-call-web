@@ -1,12 +1,14 @@
 "use client"
 
 import styles from "./page.module.css";
-import Sidebar from "@/lib/components/sidebar/sidebar";
+import Sidebar, { Friend } from "@/lib/components/sidebar/sidebar";
 import MessageArea from "@/lib/components/messaging/message-area";
 import VideoArea from "@/lib/components/video/video-area";
 import AddFriendsPopup from "@/lib/components/friends/add-friends-popup";
 import { useEffect, useState } from "react";
 import { SSE_URL } from "@/endpoints";
+import { authenticateUser } from "@/lib/server-actions/auth";
+import { getChatMessages } from "@/lib/server-actions/chat";
 
 enum MAIN_AREA {
     NONE,
@@ -16,10 +18,21 @@ enum MAIN_AREA {
     VIDEO_AREA_NO_USER,
 }
 
+export type TChatMessage = {
+    messageId: string;
+    roomId: string | null;
+    username: string,
+    content: string,
+    chatTime: Date;
+}
+
 export default function Home() {
     const [showAddFriends, setShowAddFriends] = useState<boolean>(false);
     const [mainArea, setMainArea] = useState<MAIN_AREA>(MAIN_AREA.NONE);
-    const [selectedFriend, setSelectedFriend] = useState<string|null|undefined>();
+    const [messages, setMessages] = useState<TChatMessage[]>([]);
+    const [newestMessage, setNewestMessage] = useState<TChatMessage>();
+    const [selectedFriend, setSelectedFriend] = useState<Friend|null|undefined>();
+    const [loggedInUser, setLoggedInUser] = useState<string|undefined|null>();
     const toggleAddFriendPopup = () => {
         setShowAddFriends(!showAddFriends);
     }
@@ -28,7 +41,7 @@ export default function Home() {
         e.stopPropagation();
     }
 
-    const handleMainAreaChange = (areaType: MAIN_AREA, selectedUser: string) => {
+    const handleMainAreaChange = (areaType: MAIN_AREA, selectedUser: Friend) => {
         setMainArea(areaType);
         setSelectedFriend(selectedUser);
     }
@@ -40,12 +53,15 @@ export default function Home() {
             case MAIN_AREA.NONE:
                 return <p>nada</p>;
             case MAIN_AREA.MESSAGE_AREA:
-                if(!selectedFriend) {
+                if(!selectedFriend || !loggedInUser) {
                     setMainArea(MAIN_AREA.MESSAGE_AREA_NO_USER);
                     return;
                 }
                 return <MessageArea 
-                friendUsername={selectedFriend}
+                friend={selectedFriend}
+                username={loggedInUser}
+                messages={messages}
+                onMessageSend={(message: TChatMessage) => appendMessage(message)}
                 onVideoClick={() => handleMainAreaChange(MAIN_AREA.VIDEO_AREA, selectedFriend)}
                 />
             case MAIN_AREA.VIDEO_AREA:
@@ -54,19 +70,71 @@ export default function Home() {
                     return;
                 }
                 return <VideoArea 
-                friendUsername={selectedFriend} 
+                friend={selectedFriend} 
                 onMessageClick={() => handleMainAreaChange(MAIN_AREA.MESSAGE_AREA, selectedFriend)}
                 />
         }
     }
 
+    const setCurrentUser = async () => {
+        const res = await authenticateUser()
+        if(!res.success || res.error) {
+            setLoggedInUser(undefined);
+        } else if(res.success) {
+            setLoggedInUser(res.username);
+        }
+    }
+
+    const appendMessage = (message: TChatMessage) => {
+        const newMessages = [...messages, message];
+        setMessages(newMessages);
+    }
+
+    const initializeChatMessages = async () => {
+        if(!selectedFriend) return;
+        const res = await getChatMessages(selectedFriend.roomId)
+        if(!res.success) {
+            console.log(res.error);
+        } else if(res.messages) {
+            setMessages(res.messages)
+        }
+
+    }
+
     useEffect(() => {
+        setCurrentUser();
+    }, [])
+
+    useEffect(() => {
+        if(newestMessage === undefined) return;
+        appendMessage(newestMessage);
+    }, [newestMessage])
+
+    useEffect(() => {
+        initializeChatMessages();
+
         const evtSrc = new EventSource(`${SSE_URL}/chat-listen`, {
             withCredentials: true
         });
 
         const onSSEMessage = (e: MessageEvent) => {
             console.log(e);
+            if(!e.data) return;
+
+            const data = JSON.parse(e.data);
+            if(!data.username || !data.content || !data.roomId
+               || !data.messageId || !data.chatTime) return;
+            
+            if(data.roomId === selectedFriend?.roomId) {
+                setNewestMessage({
+                    username: data.username,
+                    content: data.content,
+                    chatTime: data.chatTime,
+                    roomId: data.roomId,
+                    messageId: data.messageId,
+                })
+            }
+
         }
 
         const onSSEError = (e: Event) => {
@@ -74,16 +142,16 @@ export default function Home() {
             evtSrc.close();
         }
 
-        evtSrc.onmessage = onSSEMessage;
+        evtSrc.addEventListener('chat-message', onSSEMessage);
 
         evtSrc.onerror = onSSEError;
         
         return () => {
-            evtSrc.removeEventListener('message', onSSEMessage);
+            evtSrc.removeEventListener('chat-message', onSSEMessage);
             evtSrc.removeEventListener('error', onSSEError);
             evtSrc.close();
         }
-    }, []);
+    }, [selectedFriend]);
 
     return (
         <div className={styles.page}
@@ -91,8 +159,8 @@ export default function Home() {
         >
             <Sidebar 
             onAddFriendClick={toggleAddFriendPopup}
-            onFriendMessageClick={(friendUsername) => handleMainAreaChange(MAIN_AREA.MESSAGE_AREA, friendUsername)}
-            onFriendVideoClick={(friendUsername) => handleMainAreaChange(MAIN_AREA.VIDEO_AREA, friendUsername)}
+            onFriendMessageClick={(fr) => handleMainAreaChange(MAIN_AREA.MESSAGE_AREA, fr)}
+            onFriendVideoClick={(fr) => handleMainAreaChange(MAIN_AREA.VIDEO_AREA, fr)}
             selectedFriend={selectedFriend}
             />
             {renderMainArea()}

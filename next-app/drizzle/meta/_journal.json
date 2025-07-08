@@ -36,6 +36,41 @@
       "when": 1751100353436,
       "tag": "0004_wild_mulholland_black",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1751410927154,
+      "tag": "0005_safe_squirrel_girl",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1751419773562,
+      "tag": "0006_spotty_mandarin",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1751937334406,
+      "tag": "0007_lame_pride",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1751938181794,
+      "tag": "0008_living_lockjaw",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1751940630715,
+      "tag": "0009_closed_colossus",
+      "breakpoints": true
     }
   ]
 }

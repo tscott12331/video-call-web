@@ -2,9 +2,9 @@
 
 import { db } from "../db/db";
 import { UserFriendTable, UserProfileTable } from "../db/schemas/user";
-import { and, eq, not, or } from "drizzle-orm";
+import { and, eq, isNotNull, not, or } from "drizzle-orm";
 import { authenticateUser } from "./auth";
-import { friend } from "../components/sidebar/sidebar";
+import { Friend } from "../components/sidebar/sidebar";
 import { ChatRoomTable, UserProfile_ChatRoom } from "../db/schemas/chat";
 
 export async function friendAction(friendUsername: string) {
@@ -151,8 +151,9 @@ export async function getFriends(limit: number = 10, offset: number = 0) {
 
         const { username } = authRes;
 
-        const friendList: friend[] = await db.select({
+        const friendList: Friend[] = await db.select({
             username: UserProfileTable.Username,
+            roomId: UserFriendTable.ChatRoomId,
         })
             .from(UserProfileTable)
             .innerJoin(UserFriendTable,
@@ -169,7 +170,8 @@ export async function getFriends(limit: number = 10, offset: number = 0) {
                     )
                     ,
                     eq(UserFriendTable.IsAccepted, true),
-                    not(eq(UserProfileTable.Username, username))
+                    not(eq(UserProfileTable.Username, username)),
+                    isNotNull(UserFriendTable.ChatRoomId)
                 )
             )
             .limit(limit)

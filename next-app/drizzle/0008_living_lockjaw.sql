@@ -1,0 +1,1 @@
+ALTER TABLE "ChatMessage" ADD COLUMN "ChatTime" timestamp DEFAULT now() NOT NULL;

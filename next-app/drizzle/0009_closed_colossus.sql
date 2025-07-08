@@ -1,0 +1,1 @@
+ALTER TABLE "ChatMessage" ALTER COLUMN "Content" SET NOT NULL;

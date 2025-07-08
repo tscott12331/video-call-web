@@ -6,6 +6,7 @@ import CallControls from './call-controls';
 import { useEffect, useRef, useState } from 'react';
 import { getCookie } from '@/lib/util/cookie';
 import { SIGNALING_URL } from '@/endpoints';
+import { Friend } from '../sidebar/sidebar';
 
 type TMediaConstraint = {
     audio: boolean | MediaTrackConstraints;
@@ -13,12 +14,12 @@ type TMediaConstraint = {
 }
 
 interface VideoAreaProps {
-    friendUsername: string;
+    friend: Friend;
     onMessageClick?: () => void;
 }
 
 export default function VideoArea({
-    friendUsername,
+    friend,
     onMessageClick,
 }: VideoAreaProps) {
     const [shouldShowInfo, setShouldShowInfo] = useState<boolean>(false);
@@ -128,7 +129,7 @@ export default function VideoArea({
             onMouseEnter={maintainControls}
             onMouseLeave={resetFlash}
             visible={shouldShowInfo}
-            username={friendUsername}
+            username={friend.username}
             onControlClick={onMessageClick}
             />
             <video ref={myVideoFeed} autoPlay={true}>cannot display video</video>
