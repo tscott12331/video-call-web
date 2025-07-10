@@ -5,14 +5,15 @@ import React, { useEffect, useRef, useState } from "react";
 import { Friend } from "../sidebar/sidebar";
 import { getCookie } from "@/lib/util/cookie";
 import { TChatMessage } from "@/app/page";
-import { ChatMessage } from "@/lib/db/schemas/chat";
+import Button from "../util/button";
 
 interface MessageAreaProps {
     friend: Friend;
     username: string;
     onVideoClick?: () => void;
     onMessageSend?: (message: TChatMessage) => void;
-    messages?: TChatMessage[];
+    messages: TChatMessage[];
+    messagesLoaded: boolean;
 }
 
 export default function MessageArea({
@@ -21,11 +22,26 @@ export default function MessageArea({
     onMessageSend,
     messages,
     username,
+    messagesLoaded,
 }: MessageAreaProps) {
+    const generatePopupText = (numMessages: number) => {
+        if(numMessages > 10) {
+            return "10+ new messages";
+        } else if(numMessages > 0) {
+            return `${numMessages} new message${numMessages !== 1 ? "s" : ""}`;
+        } else {
+            return "jump to latest message";
+        }
+    }
+
     const [messageText, setMessageText] = useState<string>("");
+    const [showNewMessagePopup, setShowNewMessagePopup] = useState<boolean>(false);
+    const [newMessages, setNewMessages] = useState<number>(0);
+
     const messageWrapper = useRef<HTMLDivElement>(null);
 
     const AUTO_SCROLL_THRESH = 200; //px
+
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if(e.key === "Enter") {
@@ -61,8 +77,34 @@ export default function MessageArea({
         }
     }
 
+    const handleMessageScroll = (e: React.UIEvent<HTMLDivElement>) => {
+        if(messageWrapper.current) {
+            const scrollHeight = e.currentTarget.scrollHeight;
+            const scrollTop = e.currentTarget.scrollTop;
+            const wrapperHeight = e.currentTarget.offsetHeight;
+
+            const shouldShowPopup = scrollHeight - (scrollTop + wrapperHeight)
+              >= AUTO_SCROLL_THRESH;
+            setShowNewMessagePopup(shouldShowPopup);
+            if(!shouldShowPopup) {
+                setNewMessages(0);
+            } 
+        }
+    }
+
+    const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
+        messageWrapper.current?.scroll({
+            behavior,
+            top: messageWrapper.current.scrollHeight
+        })
+    }
+
     useEffect(() => {
-        if(messages && messageWrapper.current) {
+        if(messagesLoaded) scrollToBottom("instant");
+    }, [messagesLoaded])
+
+    useEffect(() => {
+        if(messageWrapper.current) {
             const scrollHeight = messageWrapper.current.scrollHeight;
             const scrollTop = messageWrapper.current.scrollTop;
             const wrapperHeight = messageWrapper.current.offsetHeight;
@@ -73,33 +115,16 @@ export default function MessageArea({
                       (scrollTop + wrapperHeight) <
                         AUTO_SCROLL_THRESH
               ) {
-                messageWrapper.current?.scroll({
-                    behavior: "smooth",
-                    top: messageWrapper.current.scrollHeight
-                })
+                setShowNewMessagePopup(false);
+                scrollToBottom();
+                setNewMessages(0);
+            } else {
+                setShowNewMessagePopup(true);
+                setNewMessages(newMessages + 1)
             }
           }
-    }, [messages])
 
-    //useEffect(() => {
-    //    const onLeScroll = () => {
-    //        if(messages && messageWrapper.current) {
-    //            const scrollHeight = messageWrapper.current.scrollHeight;
-    //            const scrollTop = messageWrapper.current.scrollTop;
-    //            const wrapperHeight = messageWrapper.current.offsetHeight;
-    //            const messageHeight = messageWrapper.current.children.item(messages.length - 1)?.clientHeight;
-    //            console.log(messages.length);
-    //            //console.log(messageWrapper.current.children.item(0))
-    //            if(messageHeight) {
-    //                console.log((scrollHeight - messageHeight) -
-    //                  (scrollTop + wrapperHeight));
-    //            }
-    //        }
-    //    }
-    //    messageWrapper.current?.addEventListener('scroll', onLeScroll);
-    //
-    //    return () => messageWrapper.current?.removeEventListener('scroll', onLeScroll);
-    //}, [])
+    }, [messages])
 
     return (
         <section className={styles.mainSection}>
@@ -110,6 +135,7 @@ export default function MessageArea({
             <div
                 className={styles.mainMessageWrapper}
                 ref={messageWrapper}
+                onScroll={handleMessageScroll}
             >
                 {messages?.map((message, i) => 
                     <MessageBubble
@@ -119,6 +145,16 @@ export default function MessageArea({
                     />
                 )}
             </div>
+            {
+            showNewMessagePopup &&
+            <div className={styles.newMessagePopupWrapper}>
+                <Button
+                    onClick={() => scrollToBottom()}
+                >
+                    {generatePopupText(newMessages)}
+                </Button>
+            </div>
+            }
             <div className={styles.mainInputWrapper}>
                 <textarea 
                 className={styles.mainMessageInput} 

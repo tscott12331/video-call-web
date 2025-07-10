@@ -30,6 +30,7 @@ export default function Home() {
     const [showAddFriends, setShowAddFriends] = useState<boolean>(false);
     const [mainArea, setMainArea] = useState<MAIN_AREA>(MAIN_AREA.NONE);
     const [messages, setMessages] = useState<TChatMessage[]>([]);
+    const [messagesLoaded, setMessagesLoaded] = useState<boolean>(false);
     const [newestMessage, setNewestMessage] = useState<TChatMessage>();
     const [selectedFriend, setSelectedFriend] = useState<Friend|null|undefined>();
     const [loggedInUser, setLoggedInUser] = useState<string|undefined|null>();
@@ -44,6 +45,7 @@ export default function Home() {
     const handleMainAreaChange = (areaType: MAIN_AREA, selectedUser: Friend) => {
         setMainArea(areaType);
         setSelectedFriend(selectedUser);
+        setMessagesLoaded(false);
     }
 
     const renderMainArea = () => {
@@ -61,6 +63,7 @@ export default function Home() {
                 friend={selectedFriend}
                 username={loggedInUser}
                 messages={messages}
+                messagesLoaded={messagesLoaded}
                 onMessageSend={(message: TChatMessage) => appendMessage(message)}
                 onVideoClick={() => handleMainAreaChange(MAIN_AREA.VIDEO_AREA, selectedFriend)}
                 />
@@ -97,6 +100,7 @@ export default function Home() {
             console.log(res.error);
         } else if(res.messages) {
             setMessages(res.messages)
+            setMessagesLoaded(true);
         }
 
     }
