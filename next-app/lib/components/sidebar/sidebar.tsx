@@ -1,37 +1,33 @@
 import { useEffect, useState } from "react";
 import styles from "./sidebar.module.css";
-import { getFriends } from "@/lib/server-actions/friend";
+import { getRooms } from "@/lib/server-actions/friend";
 import SidebarFriendCard from "./sidebar-friend-card";
+import { TRoom } from "@/app/page";
 
 interface SidebarProps {
     onAddFriendClick?: () => void;
-    onFriendMessageClick?: (fr: Friend) => void;
-    onFriendVideoClick?: (fr: Friend) => void;
-    selectedFriend: Friend|null|undefined;
-}
-
-export type Friend = {
-    username: string;
-    roomId: string;
+    onFriendMessageClick?: (room: TRoom) => void;
+    onFriendVideoClick?: (room: TRoom) => void;
+    selectedRoom: TRoom|null|undefined;
 }
 
 export default function Sidebar({
     onAddFriendClick,
     onFriendMessageClick,
     onFriendVideoClick,
-    selectedFriend,
+    selectedRoom,
 }: SidebarProps) {
-    const [friendList, setFriendList] = useState<Friend[]>([]);
+    const [roomList, setRoomList] = useState<TRoom[]>([]);
 
-    const initFriendList = async () => {
-        const list = await getFriends();
-        if(list.success && list.friendList) {
-            setFriendList(list.friendList);
+    const initRoomList = async () => {
+        const list = await getRooms();
+        if(list.success && list.rooms) {
+            setRoomList(list.rooms);
         }
     }
 
     useEffect(() => {
-        initFriendList();
+        initRoomList();
     }, [])
 
     return (
@@ -52,13 +48,13 @@ export default function Sidebar({
             </div>
             <div className={styles.sbFriendsList}>
             {
-                friendList.map(friend =>
+                roomList.map(room =>
                     <SidebarFriendCard
-                    friend={friend}
+                    room={room}
                     onFriendMessageClick={onFriendMessageClick}
                     onFriendVideoClick={onFriendVideoClick}
-                    isSelected={friend.username === selectedFriend?.username}
-                    key={friend.username}
+                    isSelected={room.id === selectedRoom?.id}
+                    key={room.id}
                     />
                   )
             }

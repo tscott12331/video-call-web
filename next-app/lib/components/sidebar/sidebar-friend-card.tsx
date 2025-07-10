@@ -1,25 +1,25 @@
-import { Friend } from './sidebar';
+import { TRoom } from '@/app/page';
 import styles from './sidebar-friend-card.module.css';
 
 interface SidebarFriendCardProps {
-    onFriendMessageClick?: (fr: Friend) => void;
-    onFriendVideoClick?: (fr: Friend) => void;
-    friend: Friend;
+    onFriendMessageClick?: (room: TRoom) => void;
+    onFriendVideoClick?: (room: TRoom) => void;
+    room: TRoom;
     isSelected: boolean;
 }
 
 export default function SidebarFriendCard({
     onFriendVideoClick,
     onFriendMessageClick,
-    friend,
+    room,
     isSelected,
 }: SidebarFriendCardProps) {
     const handleControlClick = (e: React.MouseEvent<HTMLDivElement>, type: 'video' | 'message') => {
         e.stopPropagation();
         if(type === 'message') {
-            onFriendMessageClick?.(friend);
+            onFriendMessageClick?.(room);
         } else if (type === 'video') {
-            onFriendVideoClick?.(friend);
+            onFriendVideoClick?.(room);
         }
     }
 
@@ -31,7 +31,7 @@ export default function SidebarFriendCard({
         >
             <div className={styles.sbFriendLeft}>
                 <div className={styles.pfpSmallWrapper}></div>
-                <p className={styles.sbFriendName}>{friend.username}</p>
+                <p className={styles.sbFriendName}>{room.name}</p>
             </div>
             <div className={styles.sbFriendRight}>
                 <div 

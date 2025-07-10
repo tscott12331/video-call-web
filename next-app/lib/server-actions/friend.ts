@@ -1,11 +1,10 @@
 "use server";
-
 import { db } from "../db/db";
 import { UserFriendTable, UserProfileTable } from "../db/schemas/user";
 import { and, eq, isNotNull, not, or } from "drizzle-orm";
 import { authenticateUser } from "./auth";
-import { Friend } from "../components/sidebar/sidebar";
 import { ChatRoomTable, UserProfile_ChatRoom } from "../db/schemas/chat";
+import { TRoom } from "@/app/page";
 
 export async function friendAction(friendUsername: string) {
     try {
@@ -106,7 +105,10 @@ export async function acceptFriend(friendUsername: string) {
 
         const { username } = authRes;
 
-        const friendRoomId = (await db.insert(ChatRoomTable).values({}).returning({ id: ChatRoomTable.ChatRoomId }))[0].id;
+        const friendRoomId = (await db.insert(ChatRoomTable).values({
+                        ChatRoomName: `${friendUsername}, ${username}`
+                    })
+                    .returning({ id: ChatRoomTable.ChatRoomId }))[0].id;
 
         await db.insert(UserProfile_ChatRoom).values([
             {
@@ -138,6 +140,46 @@ export async function acceptFriend(friendUsername: string) {
 }
 
 export async function removeFriend(friendUsername: string) {
+
+}
+
+export async function getRooms(limit: number = 10, offset: number = 0) {
+    try {
+        const authRes = await authenticateUser();
+        if(!authRes.success || !authRes.username) return { 
+            error: authRes.error,
+            success: false,
+        };
+
+        const { username } = authRes;
+
+        const rooms: TRoom[] = await db.select({
+                        id: UserProfile_ChatRoom.ChatRoomId,
+                        name: ChatRoomTable.ChatRoomName,
+                    })
+                    .from(UserProfile_ChatRoom)
+                    .innerJoin(ChatRoomTable,
+                        eq(UserProfile_ChatRoom.ChatRoomId, ChatRoomTable.ChatRoomId)
+                    )
+                    .where(
+                        eq(UserProfile_ChatRoom.Username, username)
+                    )
+                    .limit(limit)
+                    .offset(offset);
+
+        console.log(rooms);
+
+        return {
+            success: true,
+            rooms
+        }
+    } catch(err) {
+        console.error(err);
+        return {
+            error: "Server error",
+            success: false,
+        }
+    }
 
 }
 

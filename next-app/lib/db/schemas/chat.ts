@@ -3,7 +3,7 @@ import { UserProfileTable } from "./user";
 
 export const ChatRoomTable = pgTable("ChatRoom", {
     ChatRoomId: uuid('ChatRoomId').defaultRandom().primaryKey(),
-    ChatRoomName: varchar('ChatRoomName', { length: 64 })
+    ChatRoomName: varchar('ChatRoomName', { length: 64 }).notNull(),
 });
 
 export const UserProfile_ChatRoom = pgTable("UserProfile_ChatRoom", {

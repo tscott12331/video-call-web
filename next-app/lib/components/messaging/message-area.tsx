@@ -1,14 +1,13 @@
 import styles from "./message-area.module.css";
-import UserInfoTopBar from "@/lib/components/user-info/user-info-top-bar";
 import MessageBubble from "./message-bubble";
 import React, { useEffect, useRef, useState } from "react";
-import { Friend } from "../sidebar/sidebar";
 import { getCookie } from "@/lib/util/cookie";
-import { TChatMessage } from "@/app/page";
+import { TChatMessage, TRoom } from "@/app/page";
 import Button from "../util/button";
+import RoomInfoTopBar from "../user-info/user-info-top-bar";
 
 interface MessageAreaProps {
-    friend: Friend;
+    room: TRoom;
     username: string;
     onVideoClick?: () => void;
     onMessageSend?: (message: TChatMessage) => void;
@@ -17,7 +16,7 @@ interface MessageAreaProps {
 }
 
 export default function MessageArea({
-    friend,
+    room,
     onVideoClick,
     onMessageSend,
     messages,
@@ -62,7 +61,7 @@ export default function MessageArea({
                 },
                 body: JSON.stringify({
                     Content: messageText,
-                    ChatRoomId: friend.roomId,
+                    ChatRoomId: room.id,
                 }),
             })
 
@@ -128,8 +127,8 @@ export default function MessageArea({
 
     return (
         <section className={styles.mainSection}>
-            <UserInfoTopBar 
-            username={friend.username}
+            <RoomInfoTopBar 
+            roomName={room.name}
             onControlClick={onVideoClick}
             />
             <div

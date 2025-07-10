@@ -1,19 +1,19 @@
 import styles from './user-info-top-bar.module.css';
 
-interface UserInfoTopBarProps {
+interface RoomInfoTopBarProps {
     absolutePosition?: 'top' | 'bottom';
     visible?: boolean;
-    username: string;
+    roomName: string;
     onControlClick?: () => void;
 }
 
-export default function UserInfoTopBar({
+export default function RoomInfoTopBar({
     absolutePosition,
     visible = true,
-    username,
+    roomName,
     onControlClick,
     ...rest
-}: UserInfoTopBarProps & React.HTMLAttributes<HTMLDivElement>) {
+}: RoomInfoTopBarProps & React.HTMLAttributes<HTMLDivElement>) {
     return (
         <div className={styles.mainInfoWrapper}
         style={absolutePosition ?
@@ -38,7 +38,7 @@ export default function UserInfoTopBar({
         >
             <div className={styles.mainIconTextWrapper}>
                 <div className={styles.pfpBigIcon}></div>
-                <p className={styles.infoUsername}>{username}</p>
+                <p className={styles.infoUsername}>{roomName}</p>
             </div>
             <div 
             className={styles.bigIcon}

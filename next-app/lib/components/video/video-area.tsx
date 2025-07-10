@@ -1,12 +1,12 @@
 "use client";
 import styles from './video-area.module.css';
 import { io } from 'socket.io-client';
-import UserInfoTopBar from '@/lib/components/user-info/user-info-top-bar';
 import CallControls from './call-controls';
 import { useEffect, useRef, useState } from 'react';
 import { getCookie } from '@/lib/util/cookie';
 import { SIGNALING_URL } from '@/endpoints';
-import { Friend } from '../sidebar/sidebar';
+import { TRoom } from '@/app/page';
+import RoomInfoTopBar from '@/lib/components/user-info/user-info-top-bar';
 
 type TMediaConstraint = {
     audio: boolean | MediaTrackConstraints;
@@ -14,12 +14,12 @@ type TMediaConstraint = {
 }
 
 interface VideoAreaProps {
-    friend: Friend;
+    room: TRoom;
     onMessageClick?: () => void;
 }
 
 export default function VideoArea({
-    friend,
+    room,
     onMessageClick,
 }: VideoAreaProps) {
     const [shouldShowInfo, setShouldShowInfo] = useState<boolean>(false);
@@ -124,12 +124,12 @@ export default function VideoArea({
         <section className={styles.vaSection}
             onMouseMove={flashControls}
         >
-            <UserInfoTopBar 
+            <RoomInfoTopBar 
             absolutePosition='top' 
             onMouseEnter={maintainControls}
             onMouseLeave={resetFlash}
             visible={shouldShowInfo}
-            username={friend.username}
+            roomName={room.name}
             onControlClick={onMessageClick}
             />
             <video ref={myVideoFeed} autoPlay={true}>cannot display video</video>
