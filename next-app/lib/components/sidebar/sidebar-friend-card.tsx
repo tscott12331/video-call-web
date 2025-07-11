@@ -6,6 +6,7 @@ interface SidebarFriendCardProps {
     onFriendVideoClick?: (room: TRoom) => void;
     room: TRoom;
     isSelected: boolean;
+    numUnread: number;
 }
 
 export default function SidebarFriendCard({
@@ -13,6 +14,7 @@ export default function SidebarFriendCard({
     onFriendMessageClick,
     room,
     isSelected,
+    numUnread,
 }: SidebarFriendCardProps) {
     const handleControlClick = (e: React.MouseEvent<HTMLDivElement>, type: 'video' | 'message') => {
         e.stopPropagation();
@@ -37,11 +39,23 @@ export default function SidebarFriendCard({
                 <div 
                 className={styles.messageSmallIcon}
                 onClick={(e) => handleControlClick(e, 'message')}
-                ></div>
+                >
+                    <img src='/message-icon.svg' />
+                    {
+                        numUnread > 0 &&
+                        <div className={styles.notification}>{
+                            numUnread > 5 ? "!!"
+                            :
+                            numUnread
+                        }</div>
+                    }
+                </div>
                 <div 
                 className={styles.videoSmallIcon}
                 onClick={(e) => handleControlClick(e, 'video')}
-                ></div>
+                >
+                    <img src='/video-icon.svg' />
+                </div>
             </div>
         </div>
     );

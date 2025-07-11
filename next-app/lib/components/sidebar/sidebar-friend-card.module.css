@@ -19,6 +19,14 @@
     display: flex;
     align-items: center;
     gap: 5px;
+    max-width: 60%;
+
+}
+
+.sbFriendName {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .pfpSmallWrapper {
@@ -36,17 +44,31 @@
     gap: 5px;
 }
 
-.messageSmallIcon {
-    width: 15px;
-    height: 15px;
+.messageSmallIcon, .videoSmallIcon {
+    width: 20px;
+    height: 20px;
 
-    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
 }
 
-.videoSmallIcon {
-    width: 15px;
-    height: 15px;
-
-    border: 1px solid black;
+.messageSmallIcon:hover, .videoSmallIcon:hover {
+    transition: filter;
+    filter: drop-shadow(1px 1px 1px black);
 }
 
+.notification {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    padding: 1px;
+
+    color: white;
+    background-color: red;
+    border-radius: 2px;
+    text-align: center;
+
+    font-size: .7rem;
+}

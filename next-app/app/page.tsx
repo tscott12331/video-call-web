@@ -36,6 +36,8 @@ export type TRoom = {
     id: string,
 }
 
+export type TNotifications = Record<string, number>;
+
 export default function Home() {
     const [showAddFriends, setShowAddFriends] = useState<boolean>(false);
     const [mainArea, setMainArea] = useState<MAIN_AREA>(MAIN_AREA.NONE);
@@ -44,6 +46,8 @@ export default function Home() {
     const [newestMessage, setNewestMessage] = useState<TChatMessage>();
     const [selectedRoom, setSelectedRoom] = useState<TRoom|null|undefined>();
     const [loggedInUser, setLoggedInUser] = useState<string|undefined|null>();
+    const [notifications, setNotifications] = useState<TNotifications>({});
+
     const toggleAddFriendPopup = () => {
         setShowAddFriends(!showAddFriends);
     }
@@ -125,7 +129,11 @@ export default function Home() {
     }, [newestMessage])
 
     useEffect(() => {
+        if(selectedRoom === undefined || selectedRoom === null) return;
         initializeChatMessages();
+        let tmpNotif = {...notifications};
+        delete tmpNotif[selectedRoom.id];
+        setNotifications({...tmpNotif});
 
         const evtSrc = new EventSource(`${SSE_URL}/chat-listen`, {
             withCredentials: true
@@ -139,7 +147,7 @@ export default function Home() {
             if(!data.username || !data.content || !data.roomId
                || !data.messageId || !data.chatTime) return;
             
-            if(data.roomId === selectedRoom?.id) {
+            if(data.roomId === selectedRoom.id) {
                 setNewestMessage({
                     username: data.username,
                     content: data.content,
@@ -147,6 +155,14 @@ export default function Home() {
                     roomId: data.roomId,
                     messageId: data.messageId,
                 })
+            } else {
+                if(tmpNotif[data.roomId] !== undefined) {
+                    tmpNotif[data.roomId]++;
+                } else {
+                    tmpNotif[data.roomId] = 1;
+                }
+
+                setNotifications({...tmpNotif});
             }
 
         }
@@ -176,6 +192,7 @@ export default function Home() {
             onFriendMessageClick={(room) => handleMainAreaChange(MAIN_AREA.MESSAGE_AREA, room)}
             onFriendVideoClick={(room) => handleMainAreaChange(MAIN_AREA.VIDEO_AREA, room)}
             selectedRoom={selectedRoom}
+            notifications={notifications}
             />
             {renderMainArea()}
             {showAddFriends &&

@@ -103,7 +103,7 @@ export default function MessageArea({
     }, [messagesLoaded])
 
     useEffect(() => {
-        if(messageWrapper.current) {
+        if(messageWrapper.current && messages.length > 0) {
             const scrollHeight = messageWrapper.current.scrollHeight;
             const scrollTop = messageWrapper.current.scrollTop;
             const wrapperHeight = messageWrapper.current.offsetHeight;

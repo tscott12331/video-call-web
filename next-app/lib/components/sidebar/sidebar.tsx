@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import styles from "./sidebar.module.css";
 import { getRooms } from "@/lib/server-actions/friend";
 import SidebarFriendCard from "./sidebar-friend-card";
-import { TRoom } from "@/app/page";
+import { TNotifications, TRoom } from "@/app/page";
 
 interface SidebarProps {
     onAddFriendClick?: () => void;
     onFriendMessageClick?: (room: TRoom) => void;
     onFriendVideoClick?: (room: TRoom) => void;
     selectedRoom: TRoom|null|undefined;
+    notifications: TNotifications;
 }
 
 export default function Sidebar({
@@ -16,6 +17,7 @@ export default function Sidebar({
     onFriendMessageClick,
     onFriendVideoClick,
     selectedRoom,
+    notifications,
 }: SidebarProps) {
     const [roomList, setRoomList] = useState<TRoom[]>([]);
 
@@ -54,6 +56,7 @@ export default function Sidebar({
                     onFriendMessageClick={onFriendMessageClick}
                     onFriendVideoClick={onFriendVideoClick}
                     isSelected={room.id === selectedRoom?.id}
+                    numUnread={notifications[room.id] !== undefined ? notifications[room.id] : 0}
                     key={room.id}
                     />
                   )
