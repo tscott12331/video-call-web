@@ -2,16 +2,19 @@ import { searchUsers } from '@/lib/server-actions/search';
 import Button from '../util/button';
 import styles from './add-friends-popup.module.css';
 import { useEffect, useState } from 'react';
-import { friendAction } from '@/lib/server-actions/friend';
+import AddFriendCard from './add-friend-card';
 
-type SimpleUser = {
+export type SimpleUser = {
     username: string;
     friendStatus: "unadded" | "pending" | "added";
 }
 
+type TPopupPage = 'add-friends' | 'create-room';
+
 export default function AddFriendsPopup({ ...rest }: React.HTMLProps<HTMLDivElement>) {
     const [userList, setUserList] = useState<SimpleUser[]>([]);
     const [searchPhrase, setSearchPhrase] = useState<string>("");
+    const [page, setPage] = useState<TPopupPage>("add-friends");
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
@@ -47,10 +50,8 @@ export default function AddFriendsPopup({ ...rest }: React.HTMLProps<HTMLDivElem
         }
     }
 
-    const handleFriendAction = async (friend: SimpleUser) => {
-        try {
-            const res = await friendAction(friend.username);
-            if(res.success) {
+    const handleFriendAction = async (friend: SimpleUser, success: boolean) => {
+        if(success) {
                 const userIndex = userList.indexOf(friend);
                 if(userIndex === -1) return;
                 const nextStatus = friend.friendStatus === "unadded" ?
@@ -60,9 +61,6 @@ export default function AddFriendsPopup({ ...rest }: React.HTMLProps<HTMLDivElem
                             { username: friend.username,
                             friendStatus: nextStatus },
                             ...userList.slice(userIndex + 1, userList.length)]);
-            }
-        } catch(err) {
-            console.error(err);
         }
     }
 
@@ -72,6 +70,9 @@ export default function AddFriendsPopup({ ...rest }: React.HTMLProps<HTMLDivElem
 
     return (
         <div className={styles.wrapper} {...rest}>
+        {
+            page === 'add-friends' ?
+            <>
             <div className={styles.searchArea}>
                 <div className={styles.searchWrapper}>
                     <input placeholder="search for friends" 
@@ -84,30 +85,83 @@ export default function AddFriendsPopup({ ...rest }: React.HTMLProps<HTMLDivElem
                         <img src='/search-symbol.svg' />
                     </Button>
                 </div>
+                <Button onClick={() => setPage('create-room')}>create room</Button>
             </div>
             <div className={styles.friendArea}>
                 {
                 userList.map(user => 
-                    <div className={styles.friendWrapper}
-                    key={user.username}
-                    >
-                        <div className={styles.friendWrapperLeft}>
-                            <div className={styles.pfpIconWrapper}></div>
-                            <p className={styles.friendUsername}>{user.username}</p>
-                        </div>
-                        <Button
-                        onClick={() => handleFriendAction(user)}
-                        >
-                            <img src={user.friendStatus === "unadded" ?
-                                        '/plus.svg' :
-                                        user.friendStatus === "pending" ?
-                                        '/pending.svg' :
-                                        '/added.svg' } />
-                        </Button>
-                    </div>
+                    <AddFriendCard
+                        username={user.username}
+                        friendStatus={user.friendStatus}
+                        onFriendAction={handleFriendAction}
+                        key={user.username}
+                    />
                 )
                 }
             </div>
+            </>
+            : 
+            <>
+            <div className={styles.createGroupWrapper}>
+                <div className={styles.createGroupTop}>
+                    <div className={styles.backButtonCell}>
+                        <Button
+                        className={styles.backButton}
+                        onClick={() => setPage('add-friends')}
+                        >
+                            <img src='/arrow-left.svg' />
+                        </Button>
+                    </div>
+                    <div className={styles.titleCell}>
+                        <h3>create group</h3>
+                    </div>
+                </div>
+                <div className={styles.groupPfpCell}>
+                    <div className={styles.groupPfpWrapper}></div>
+                    <Button className={styles.changeGroupPfpButton}>
+                        change picture
+                    </Button>
+                </div>
+                <div className={styles.nameInputCell}>
+                    <input placeholder="group name"/>
+                </div>
+                <div className={styles.addFriendCell}>
+                    <AddFriendCard
+                        username="you"
+                        friendStatus="added"
+                    />
+                    <AddFriendCard
+                        username="you"
+                        friendStatus="added"
+                    />
+                    <AddFriendCard
+                        username="you"
+                        friendStatus="added"
+                    />
+                    <AddFriendCard
+                        username="you"
+                        friendStatus="added"
+                    />
+                    <AddFriendCard
+                        username="you"
+                        friendStatus="added"
+                    />
+                    <AddFriendCard
+                        username="you"
+                        friendStatus="added"
+                    />
+                    <AddFriendCard
+                        username="you"
+                        friendStatus="added"
+                    />
+                    <AddFriendCard
+                        username="you"
+                        friendStatus="added"
+                    />
+                </div>
+            </div>
+            </>
+        }
         </div>
     )
 }

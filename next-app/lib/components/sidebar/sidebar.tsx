@@ -44,7 +44,7 @@ export default function Sidebar({
                     </div>
                 </div>
                 <div className={styles.sbSearchWrapper}>
-                    <input placeholder="search friends" className={styles.sbSearch} />
+                    <input placeholder="search rooms" className={styles.sbSearch} />
                     <button className={styles.sbSearchBut}>search</button>
                 </div>
             </div>
