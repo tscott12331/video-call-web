@@ -15,20 +15,10 @@
 
 }
 
-.friendWrapper button {
-    width: 30px;
-    height: 30px;
-    border-radius: 15px;
-}
-
 .friendWrapperLeft {
     display: flex;
     gap: 5px;
     align-items: center;
-}
-
-.friendWrapper button > img {
-    width: 100%;
 }
 
 .pfpIconWrapper {

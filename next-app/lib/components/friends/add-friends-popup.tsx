@@ -2,7 +2,9 @@ import { searchUsers } from '@/lib/server-actions/search';
 import Button from '../util/button';
 import styles from './add-friends-popup.module.css';
 import { useEffect, useState } from 'react';
-import AddFriendCard from './add-friend-card';
+import FriendCard from './friend-card';
+import FriendActionButton from './friend-action-button';
+import { friendAction } from '@/lib/server-actions/friend';
 
 export type SimpleUser = {
     username: string;
@@ -50,8 +52,10 @@ export default function AddFriendsPopup({ ...rest }: React.HTMLProps<HTMLDivElem
         }
     }
 
-    const handleFriendAction = async (friend: SimpleUser, success: boolean) => {
-        if(success) {
+    const handleFriendAction = async (friend: SimpleUser) => {
+        try {
+            const res = await friendAction(friend.username);
+            if(res.success) {
                 const userIndex = userList.indexOf(friend);
                 if(userIndex === -1) return;
                 const nextStatus = friend.friendStatus === "unadded" ?
@@ -61,6 +65,9 @@ export default function AddFriendsPopup({ ...rest }: React.HTMLProps<HTMLDivElem
                             { username: friend.username,
                             friendStatus: nextStatus },
                             ...userList.slice(userIndex + 1, userList.length)]);
+            }
+        } catch(err) {
+            console.error(err);
         }
     }
 
@@ -90,12 +97,15 @@ export default function AddFriendsPopup({ ...rest }: React.HTMLProps<HTMLDivElem
             <div className={styles.friendArea}>
                 {
                 userList.map(user => 
-                    <AddFriendCard
+                    <FriendCard
                         username={user.username}
-                        friendStatus={user.friendStatus}
-                        onFriendAction={handleFriendAction}
                         key={user.username}
-                    />
+                    >
+                        <FriendActionButton
+                            friendStatus={user.friendStatus}
+                            onFriendAction={() => handleFriendAction(user)}
+                        />
+                    </FriendCard>
                 )
                 }
             </div>
@@ -126,37 +136,8 @@ export default function AddFriendsPopup({ ...rest }: React.HTMLProps<HTMLDivElem
                     <input placeholder="group name"/>
                 </div>
                 <div className={styles.addFriendCell}>
-                    <AddFriendCard
+                    <FriendCard
                         username="you"
-                        friendStatus="added"
-                    />
-                    <AddFriendCard
-                        username="you"
-                        friendStatus="added"
-                    />
-                    <AddFriendCard
-                        username="you"
-                        friendStatus="added"
-                    />
-                    <AddFriendCard
-                        username="you"
-                        friendStatus="added"
-                    />
-                    <AddFriendCard
-                        username="you"
-                        friendStatus="added"
-                    />
-                    <AddFriendCard
-                        username="you"
-                        friendStatus="added"
-                    />
-                    <AddFriendCard
-                        username="you"
-                        friendStatus="added"
-                    />
-                    <AddFriendCard
-                        username="you"
-                        friendStatus="added"
                     />
                 </div>
             </div>
