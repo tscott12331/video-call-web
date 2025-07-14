@@ -49,13 +49,22 @@ export async function searchUsers(phrase: string, limit: number = 10, offset: nu
 export async function searchFriends(phrase: string, limit: number = 10, offset: number = 0) {
     try {
         const token = (await cookies()).get('token')?.value;
-        if(!token) return [];
+        if(!token) return {
+            success: false,
+            error: "Authentication error",
+        };
 
         const tokenValue = await verifyJWT(token);
-        if(!tokenValue) return [];
+        if(!tokenValue) return {
+            success: false,
+            error: "Authentication error",
+        };
 
         const username = tokenValue.payload.username as string|undefined;
-        if(!username) return [];
+        if(!username) return {
+            success: false,
+            error: "Authentication error",
+        };
 
         const res = await searchFriendTable(phrase, username, true, limit, offset);
         if(!res.success || res.error || !res.userList) return {
