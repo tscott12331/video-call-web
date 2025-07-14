@@ -1,126 +1,61 @@
-import { searchUsers } from '@/lib/server-actions/search';
 import Button from '../util/button';
 import styles from './add-friends-popup.module.css';
 import { useEffect, useState } from 'react';
 import FriendCard from './friend-card';
-import FriendActionButton from './friend-action-button';
-import { friendAction } from '@/lib/server-actions/friend';
+import SearchFriendsPopup from './search-friends-popup';
+import BackButton from '../util/back-button';
 
 export type SimpleUser = {
     username: string;
     friendStatus: "unadded" | "pending" | "added";
 }
 
-type TPopupPage = 'add-friends' | 'create-room';
+export type TPopupPage = 'add-friends' | 'create-room';
 
 export default function AddFriendsPopup({ ...rest }: React.HTMLProps<HTMLDivElement>) {
-    const [userList, setUserList] = useState<SimpleUser[]>([]);
-    const [searchPhrase, setSearchPhrase] = useState<string>("");
     const [page, setPage] = useState<TPopupPage>("add-friends");
+    const [showFriendSearch, setShowFriendSearch] = useState<boolean>(false);
+    const [groupUsers, setGroupUsers] = useState<string[]>([]);
 
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        e.preventDefault();
-        setSearchPhrase(e.target.value);
-    }
-
-    const handleSearchKeydown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if(e.key === 'Enter') {
-            handleSearch();
+    const handleFriendClick = (username: string) => {
+        if(page === 'create-room') {
+            setShowFriendSearch(false);
+            if(groupUsers.indexOf(username) !== -1) return
+            
+            setGroupUsers([...groupUsers, username]);
         }
-    }
-
-    const handleSearch = () => {
-        const trimmedPhrase = searchPhrase.trim();
-        if(trimmedPhrase.length === 0) return;
-        search(trimmedPhrase)
-    }
-
-    const search = async (phrase: string) => {
-        try {
-            const list = await searchUsers(phrase);
-            const newUserList: SimpleUser[] = list.map(user => ({
-                username: user.username,
-                friendStatus: user.requestIsAccepted === null ?
-                                "unadded" :
-                                user.requestIsAccepted ?
-                                "added" :
-                                "pending"
-            }))
-            setUserList(newUserList);
-        } catch(err) {
-            console.error(err);
-        }
-    }
-
-    const handleFriendAction = async (friend: SimpleUser) => {
-        try {
-            const res = await friendAction(friend.username);
-            if(res.success) {
-                const userIndex = userList.indexOf(friend);
-                if(userIndex === -1) return;
-                const nextStatus = friend.friendStatus === "unadded" ?
-                                    "pending" :
-                                    "added";
-                setUserList([...userList.slice(0, userIndex), 
-                            { username: friend.username,
-                            friendStatus: nextStatus },
-                            ...userList.slice(userIndex + 1, userList.length)]);
-            }
-        } catch(err) {
-            console.error(err);
-        }
+        
     }
 
     useEffect(() => {
-        search("");
-    }, [])
+        setGroupUsers([]);
+    }, [page])
 
     return (
         <div className={styles.wrapper} {...rest}>
         {
             page === 'add-friends' ?
-            <>
-            <div className={styles.searchArea}>
-                <div className={styles.searchWrapper}>
-                    <input placeholder="search for friends" 
-                        onChange={handleSearchChange}
-                        onKeyDown={handleSearchKeydown}
-                    />
-                    <Button
-                        onClick={handleSearch}
-                    >
-                        <img src='/search-symbol.svg' />
-                    </Button>
-                </div>
-                <Button onClick={() => setPage('create-room')}>create room</Button>
-            </div>
-            <div className={styles.friendArea}>
-                {
-                userList.map(user => 
-                    <FriendCard
-                        username={user.username}
-                        key={user.username}
-                    >
-                        <FriendActionButton
-                            friendStatus={user.friendStatus}
-                            onFriendAction={() => handleFriendAction(user)}
-                        />
-                    </FriendCard>
-                )
-                }
-            </div>
-            </>
+            <SearchFriendsPopup
+                page={page}
+                onPageChange={(p) => setPage(p)}
+            />
             : 
+            showFriendSearch ?
+            <SearchFriendsPopup
+                page={page}
+                onPageChange={(p) => setPage(p)}
+                onCancelButtonClick={() => setShowFriendSearch(false)}
+                onFriendClick={handleFriendClick}
+                groupUsers={groupUsers}
+            />
+            :
             <>
             <div className={styles.createGroupWrapper}>
                 <div className={styles.createGroupTop}>
                     <div className={styles.backButtonCell}>
-                        <Button
-                        className={styles.backButton}
+                        <BackButton
                         onClick={() => setPage('add-friends')}
-                        >
-                            <img src='/arrow-left.svg' />
-                        </Button>
+                        />
                     </div>
                     <div className={styles.titleCell}>
                         <h3>create group</h3>
@@ -139,6 +74,21 @@ export default function AddFriendsPopup({ ...rest }: React.HTMLProps<HTMLDivElem
                     <FriendCard
                         username="you"
                     />
+                    {
+                        groupUsers.map(user => 
+                        <FriendCard
+                            username={user}
+                            key={user}
+                        />
+                        )
+                    }
+                    <div className={styles.groupAddWrapper}>
+                        <Button
+                            onClick={() => setShowFriendSearch(true)}
+                        >
+                            <img src='plus.svg' />
+                        </Button>
+                    </div>
                 </div>
             </div>
             </>

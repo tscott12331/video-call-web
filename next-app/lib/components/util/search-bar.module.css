@@ -1,0 +1,31 @@
+.searchWrapper {
+    width: 80%;
+    --search-wrapper-height: 1.5rem;
+    height: var(--search-wrapper-height);
+    border-bottom: 1px solid black;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.searchWrapper input {
+    width: calc(100% - var(--search-wrapper-height));
+    background: none;
+}
+
+.searchWrapper > button {
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    background: none;
+    border: none;
+    border-radius: 5px;
+}
+
+.searchWrapper > button:hover {
+    background: lightgrey;
+}
+
+.searchIconWrapper:hover {
+    background: grey;
+}

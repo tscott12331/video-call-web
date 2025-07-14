@@ -22,72 +22,6 @@
     box-shadow: 0px 0px 5px 1px black;
 }
 
-.searchArea {
-    height: 10%;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-
-    /* to line up with friend cards */
-    overflow-y: auto;
-    scrollbar-gutter: stable both-edges;
-    border-bottom: 1px solid black;
-}
-
-.searchArea > button { 
-    width: calc(.7rem * 6);
-    font-size: .7rem;
-}
-
-.searchWrapper {
-    width: 80%;
-    --search-wrapper-height: 1.5rem;
-    height: var(--search-wrapper-height);
-    border-bottom: 1px solid black;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.searchWrapper input {
-    width: calc(100% - var(--search-wrapper-height));
-    background: none;
-}
-
-.searchWrapper > button {
-    height: 100%;
-    aspect-ratio: 1 / 1;
-    background: none;
-    border: none;
-    border-radius: 5px;
-}
-
-.searchWrapper > button:hover {
-    background: lightgrey;
-}
-
-.searchIconWrapper:hover {
-    background: grey;
-}
-
-.friendArea {
-    height: 90%;
-    padding: 5px 2px;
-
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-
-    overflow-y: auto;
-    scrollbar-color: lightgrey transparent;
-    scrollbar-width: thin;
-    scrollbar-gutter: stable both-edges;
-}
-
-
 .createGroupWrapper {
     height: 100%;
     display: grid;
@@ -106,17 +40,6 @@
 .backButtonCell {
     padding: 10px;
     grid-column: back-button;
-}
-
-.backButton {
-    width: 1rem;
-    background: none;
-    outline: none;
-    border: none;
-}
-
-.backButton:hover {
-    filter: drop-shadow(0px 0px 2px grey);
 }
 
 .titleCell {
@@ -162,4 +85,22 @@
     scrollbar-color: lightgrey transparent;
     scrollbar-width: thin;
     scrollbar-gutter: stable both-edges;
+}
+
+.groupAddWrapper {
+    padding: 10px;
+    height: 75px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.groupAddWrapper button {
+    height: 70%;
+    border: none;
+    background: none;
+}
+
+.groupAddWrapper img {
+    height: 100%;
 }

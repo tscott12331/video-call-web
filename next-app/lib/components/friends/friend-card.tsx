@@ -8,11 +8,13 @@ interface FriendCardProps {
 export default function FriendCard({
     username,
     children,
-}: FriendCardProps) {
+    ...rest
+}: FriendCardProps & React.HTMLAttributes<HTMLDivElement>) {
 
     return (
         <div className={styles.friendWrapper}
             key={username}
+            {...rest}
         >
             <div className={styles.friendWrapperLeft}>
                 <div className={styles.pfpIconWrapper}></div>

@@ -1,0 +1,32 @@
+.searchArea {
+    height: 10%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+
+    /* to line up with friend cards */
+    overflow-y: auto;
+    scrollbar-gutter: stable both-edges;
+    border-bottom: 1px solid black;
+}
+
+.searchArea > button { 
+    /*width: calc(.7rem * 6);*/
+    font-size: .7rem;
+}
+
+.friendArea {
+    height: 90%;
+    padding: 5px 2px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    overflow-y: auto;
+    scrollbar-color: lightgrey transparent;
+    scrollbar-width: thin;
+    scrollbar-gutter: stable both-edges;
+}
