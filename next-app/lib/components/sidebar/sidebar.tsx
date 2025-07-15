@@ -9,6 +9,7 @@ interface SidebarProps {
     onFriendMessageClick?: (room: TRoom) => void;
     onFriendVideoClick?: (room: TRoom) => void;
     selectedRoom: TRoom|null|undefined;
+    newRoom: boolean;
     notifications: TNotifications;
 }
 
@@ -17,6 +18,7 @@ export default function Sidebar({
     onFriendMessageClick,
     onFriendVideoClick,
     selectedRoom,
+    newRoom,
     notifications,
 }: SidebarProps) {
     const [roomList, setRoomList] = useState<TRoom[]>([]);
@@ -30,7 +32,7 @@ export default function Sidebar({
 
     useEffect(() => {
         initRoomList();
-    }, [])
+    }, [newRoom])
 
     return (
         <section className={styles.sbSection}>

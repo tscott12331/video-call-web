@@ -47,6 +47,7 @@ export default function Home() {
     const [selectedRoom, setSelectedRoom] = useState<TRoom|null|undefined>();
     const [loggedInUser, setLoggedInUser] = useState<string|undefined|null>();
     const [notifications, setNotifications] = useState<TNotifications>({});
+    const [newRoomTog, setNewRoomTog] = useState<boolean>(false);
 
     const toggleAddFriendPopup = () => {
         setShowAddFriends(!showAddFriends);
@@ -117,6 +118,12 @@ export default function Home() {
             setMessagesLoaded(true);
         }
 
+    }
+
+    const handleRoomCreate = (room: TRoom) => {
+        setNewRoomTog(!newRoomTog);
+        setShowAddFriends(false);
+        handleMainAreaChange(MAIN_AREA.MESSAGE_AREA, room);
     }
 
     useEffect(() => {
@@ -192,12 +199,14 @@ export default function Home() {
             onFriendMessageClick={(room) => handleMainAreaChange(MAIN_AREA.MESSAGE_AREA, room)}
             onFriendVideoClick={(room) => handleMainAreaChange(MAIN_AREA.VIDEO_AREA, room)}
             selectedRoom={selectedRoom}
+            newRoom={newRoomTog}
             notifications={notifications}
             />
             {renderMainArea()}
             {showAddFriends &&
                 <AddFriendsPopup 
                 onClick={onPopupClick}
+                onRoomCreate={handleRoomCreate}
                 />
             }
         </div> 

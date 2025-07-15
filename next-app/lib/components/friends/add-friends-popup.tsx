@@ -6,6 +6,7 @@ import SearchFriendsPopup from './search-friends-popup';
 import BackButton from '../util/back-button';
 import FriendActionButton from './friend-action-button';
 import { createRoom } from '@/lib/server-actions/chat';
+import { TRoom } from '@/app/page';
 
 export type SimpleUser = {
     username: string;
@@ -14,7 +15,14 @@ export type SimpleUser = {
 
 export type TPopupPage = 'add-friends' | 'create-room';
 
-export default function AddFriendsPopup({ ...rest }: React.HTMLProps<HTMLDivElement>) {
+interface AddFriendsPopupProps {
+    onRoomCreate?: (room: TRoom) => void;
+}
+
+export default function AddFriendsPopup({ 
+    onRoomCreate,
+    ...rest 
+}: AddFriendsPopupProps & React.HTMLProps<HTMLDivElement>) {
     const [page, setPage] = useState<TPopupPage>("add-friends");
     const [showFriendSearch, setShowFriendSearch] = useState<boolean>(false);
     const [groupUsers, setGroupUsers] = useState<string[]>([]);
@@ -44,7 +52,9 @@ export default function AddFriendsPopup({ ...rest }: React.HTMLProps<HTMLDivElem
     const handleCreateGroup = async () => {
         if(groupUsers.length <= 1) return; // not enough users to create group
 
-        const room = await createRoom(groupUsers, groupName.length > 0 ? groupName : undefined);
+        const res = await createRoom(groupUsers, groupName.length > 0 ? groupName : undefined);
+
+        if(res.success && res.room) onRoomCreate?.(res.room);
     }
 
     useEffect(() => {
