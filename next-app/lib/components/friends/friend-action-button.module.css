@@ -11,3 +11,7 @@
 .actionButton > img {
     width: 60%;
 }
+
+.x {
+    transform: rotate(45deg);
+}

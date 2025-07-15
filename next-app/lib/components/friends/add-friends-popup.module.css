@@ -38,14 +38,23 @@
 }
 
 .backButtonCell {
-    padding: 10px;
     grid-column: back-button;
 }
 
 .titleCell {
     grid-column: title;
-    padding: 10px;
     text-align: center;
+}
+
+.createButtonCell {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    font-size: 0.7rem;
+}
+
+.backButtonCell, .titleCell, .createButtonCell {
+    padding: 10px;
 }
 
 .groupPfpCell, .nameInputCell {

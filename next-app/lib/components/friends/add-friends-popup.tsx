@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import FriendCard from './friend-card';
 import SearchFriendsPopup from './search-friends-popup';
 import BackButton from '../util/back-button';
+import FriendActionButton from './friend-action-button';
 
 export type SimpleUser = {
     username: string;
@@ -25,6 +26,17 @@ export default function AddFriendsPopup({ ...rest }: React.HTMLProps<HTMLDivElem
             setGroupUsers([...groupUsers, username]);
         }
         
+    }
+
+    const removeFromGroup = (user: string) => {
+        const index = groupUsers.indexOf(user);
+        if(index === -1) return;
+
+        let newGroup = [...groupUsers];
+        newGroup.splice(index, 1);
+
+        setGroupUsers([...newGroup]);
+
     }
 
     useEffect(() => {
@@ -60,6 +72,11 @@ export default function AddFriendsPopup({ ...rest }: React.HTMLProps<HTMLDivElem
                     <div className={styles.titleCell}>
                         <h3>create group</h3>
                     </div>
+                    <div className={styles.createButtonCell}>
+                        <Button>
+                        create
+                        </Button>
+                    </div>
                 </div>
                 <div className={styles.groupPfpCell}>
                     <div className={styles.groupPfpWrapper}></div>
@@ -79,7 +96,13 @@ export default function AddFriendsPopup({ ...rest }: React.HTMLProps<HTMLDivElem
                         <FriendCard
                             username={user}
                             key={user}
-                        />
+                        >
+                            <FriendActionButton
+                                remove={true}
+                                friendStatus="added"
+                                onFriendAction={() => removeFromGroup(user)}
+                            />
+                        </FriendCard>
                         )
                     }
                     <div className={styles.groupAddWrapper}>
