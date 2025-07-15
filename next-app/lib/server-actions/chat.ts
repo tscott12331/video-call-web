@@ -2,7 +2,7 @@
 
 import { and, asc, eq } from "drizzle-orm";
 import { db } from "../db/db";
-import { ChatMessage, UserProfile_ChatRoom } from "../db/schemas/chat";
+import { ChatMessage, ChatRoomTable, UserProfile_ChatRoom } from "../db/schemas/chat";
 import { authenticateUser } from "./auth";
 import { TChatMessage } from "@/app/page";
 
@@ -51,4 +51,53 @@ export async function getChatMessages(roomId: string, offset: number = 0, limit:
             error: "Server error",
         }
     }
+}
+
+export async function createRoom(friends: string[], name?: string) {
+    try {
+        const authRes = await authenticateUser();
+        if(!authRes.success || !authRes.username) return { 
+            error: authRes.error,
+            success: false,
+        };
+
+        const { username } = authRes;
+        
+        if(friends.length <= 1) return {
+            success: false,
+            error: "Need 2+ friends to create a group"
+        }
+
+        const roomName = name ?? username.concat(', ', friends.join(', '));
+
+
+        const room = (await db.insert(ChatRoomTable).values({
+            ChatRoomName: roomName,
+        }).returning({
+            id: ChatRoomTable.ChatRoomId,
+            name: ChatRoomTable.ChatRoomName,
+        }))[0];
+        
+        const userArr = [{
+            Username: username,
+            ChatRoomId: room.id
+        }, ...friends.map(friend => ({
+            Username: friend,
+            ChatRoomId: room.id
+        }))];
+
+        await db.insert(UserProfile_ChatRoom).values(userArr).returning();
+        
+        return { 
+            success: true,
+            room
+        }
+    } catch(err) {
+        console.error(err);
+        return {
+            success: false,
+            error: "Server error",
+        }
+    }
+
 }

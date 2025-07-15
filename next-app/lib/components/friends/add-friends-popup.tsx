@@ -5,6 +5,7 @@ import FriendCard from './friend-card';
 import SearchFriendsPopup from './search-friends-popup';
 import BackButton from '../util/back-button';
 import FriendActionButton from './friend-action-button';
+import { createRoom } from '@/lib/server-actions/chat';
 
 export type SimpleUser = {
     username: string;
@@ -17,6 +18,7 @@ export default function AddFriendsPopup({ ...rest }: React.HTMLProps<HTMLDivElem
     const [page, setPage] = useState<TPopupPage>("add-friends");
     const [showFriendSearch, setShowFriendSearch] = useState<boolean>(false);
     const [groupUsers, setGroupUsers] = useState<string[]>([]);
+    const [groupName, setGroupName] = useState<string>("");
 
     const handleFriendClick = (username: string) => {
         if(page === 'create-room') {
@@ -37,6 +39,12 @@ export default function AddFriendsPopup({ ...rest }: React.HTMLProps<HTMLDivElem
 
         setGroupUsers([...newGroup]);
 
+    }
+
+    const handleCreateGroup = async () => {
+        if(groupUsers.length <= 1) return; // not enough users to create group
+
+        const room = await createRoom(groupUsers, groupName.length > 0 ? groupName : undefined);
     }
 
     useEffect(() => {
@@ -73,7 +81,7 @@ export default function AddFriendsPopup({ ...rest }: React.HTMLProps<HTMLDivElem
                         <h3>create group</h3>
                     </div>
                     <div className={styles.createButtonCell}>
-                        <Button>
+                        <Button onClick={handleCreateGroup}>
                         create
                         </Button>
                     </div>
@@ -85,7 +93,10 @@ export default function AddFriendsPopup({ ...rest }: React.HTMLProps<HTMLDivElem
                     </Button>
                 </div>
                 <div className={styles.nameInputCell}>
-                    <input placeholder="group name"/>
+                    <input 
+                        placeholder="group name"
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setGroupName(e.currentTarget.value)}
+                    />
                 </div>
                 <div className={styles.addFriendCell}>
                     <FriendCard
