@@ -26,6 +26,59 @@
 
     border-radius: 20px;
     border: 1px solid black;
+
+    position: relative;
+}
+
+.profilePopup {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    border: 1px solid black;
+    border-radius: 5px;
+
+    box-shadow: 0 0 2px black;
+}
+
+.profilePopupItem {
+    height: 30px;
+    width: 100px;
+
+    background: lightgray;
+
+    padding: 5px;
+
+    display: block;
+
+    user-select: none;
+}
+
+.profilePopupItem:is(button) {
+    text-align: left;
+    
+    outline: none;
+    border: none;
+    font: inherit;
+}
+
+.profilePopupItem:is(a) {
+    text-decoration: none;
+    color: inherit;
+}
+
+.profilePopupItem:hover {
+    background: darkgrey;
+}
+
+.profilePopupItem:first-child {
+    border-bottom: 1px solid black;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.profilePopupItem:last-child {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
 
 .addFriendWrapper {

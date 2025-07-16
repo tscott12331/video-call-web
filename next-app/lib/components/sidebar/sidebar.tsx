@@ -3,6 +3,8 @@ import styles from "./sidebar.module.css";
 import { getRooms } from "@/lib/server-actions/friend";
 import SidebarFriendCard from "./sidebar-friend-card";
 import { TNotifications, TRoom } from "@/app/page";
+import Button from "../util/button";
+import { logout } from "@/lib/server-actions/auth";
 
 interface SidebarProps {
     onAddFriendClick?: () => void;
@@ -22,6 +24,7 @@ export default function Sidebar({
     notifications,
 }: SidebarProps) {
     const [roomList, setRoomList] = useState<TRoom[]>([]);
+    const [showProfilePopup, setShowProfilePopup] = useState<boolean>(false);
 
     const initRoomList = async () => {
         const list = await getRooms();
@@ -30,15 +33,40 @@ export default function Sidebar({
         }
     }
 
+    const handlePopupClick = (e: React.MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation();
+    }
+
     useEffect(() => {
         initRoomList();
     }, [newRoom])
 
     return (
-        <section className={styles.sbSection}>
+        <section className={styles.sbSection}
+            onClick={() => showProfilePopup && setShowProfilePopup(false)}
+        >
             <div className={styles.sbCtrls}>
                 <div className={styles.sbCtrlsTop}>
-                    <div className={styles.pfpWrapper}></div>
+                    <div 
+                        className={styles.pfpWrapper}
+                        onClick={() => setShowProfilePopup(true)}
+                    >
+                    {
+                        showProfilePopup &&
+                        <div className={styles.profilePopup}
+                            onClick={handlePopupClick}
+                        >
+                            <a 
+                                className={styles.profilePopupItem}
+                                href='/edit-profile'
+                            >edit profile</a>
+                            <Button 
+                                className={styles.profilePopupItem}
+                                onClick={() => logout()}
+                            >log out</Button>
+                        </div>
+                    }
+                    </div>
                     <div className={styles.addFriendWrapper}
                     onClick={onAddFriendClick}
                     >

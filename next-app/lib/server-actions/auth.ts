@@ -112,3 +112,13 @@ export const authenticateUser = async () => {
         };
     }
 }
+
+export const logout = async () => {
+    try {
+        (await cookies()).delete('token');
+    } catch(err) {
+        console.error(err);
+    } finally {
+        redirect('/login');
+    }
+}
