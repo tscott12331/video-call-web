@@ -26,7 +26,9 @@ export default function EditProfile() {
                 <a 
                     className={styles.homeWrapper}
                     href='/'
-                ></a>
+                >
+                    <img src='/home-icon.svg' />
+                </a>
             </div>
             <div className={styles.bioCell}>i am a buhster, you are a buhster, we're all buhsters. at the end of the day, if you're not a buhster, you gotta go. -me</div>
             <h2 className={styles.friendsTitle}>friends</h2>
