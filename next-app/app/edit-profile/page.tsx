@@ -4,8 +4,23 @@ import Button from '@/lib/components/util/button';
 import styles from './page.module.css';
 import FriendCard from '@/lib/components/friends/friend-card';
 import FriendActionButton from '@/lib/components/friends/friend-action-button';
+import { useState } from 'react';
 
 export default function EditProfile() {
+    const [isEditingBio, setIsEditingBio] = useState<boolean>(false);
+    const [bioText, setBioText] = useState<string>("");
+
+    const handleBioEditToggle = () => {
+        setIsEditingBio(!isEditingBio);
+    }
+
+    const handleBioKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if(e.key === 'Enter') {
+            handleBioEditToggle();
+            return;
+        }
+    }
+
     return (
         <div
             className={styles.page}
@@ -30,7 +45,27 @@ export default function EditProfile() {
                     <img src='/home-icon.svg' />
                 </a>
             </div>
-            <div className={styles.bioCell}>i am a buhster, you are a buhster, we're all buhsters. at the end of the day, if you're not a buhster, you gotta go. -me</div>
+            <div className={styles.bioCell}>
+                {isEditingBio ?
+                <textarea 
+                    defaultValue={bioText} 
+                    className={styles.bioEdit}
+                    onKeyDown={handleBioKeyDown}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setBioText(e.currentTarget.value)}
+                ></textarea>
+                :
+                <p className={styles.bio}>{bioText}</p>
+                }
+                <Button
+                    onClick={handleBioEditToggle}
+                >
+                {isEditingBio ? 
+                    "done"
+                :
+                    "edit"
+                }
+                </Button>
+            </div>
             <h2 className={styles.friendsTitle}>friends</h2>
             <div className={styles.friendsCell}>
                 <FriendCard
