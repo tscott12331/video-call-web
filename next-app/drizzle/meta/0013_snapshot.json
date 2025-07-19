@@ -1,0 +1,392 @@
+{
+  "id": "6c146402-0dcf-4a6c-86fd-631f708fbd9e",
+  "prevId": "ea1ef746-8393-46cb-a1ad-5d0ea209bc51",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.ChatMessage": {
+      "name": "ChatMessage",
+      "schema": "",
+      "columns": {
+        "ChatMessageId": {
+          "name": "ChatMessageId",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "Username": {
+          "name": "Username",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ChatRoomId": {
+          "name": "ChatRoomId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "Content": {
+          "name": "Content",
+          "type": "varchar(512)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ChatTime": {
+          "name": "ChatTime",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "ChatMessage_Username_UserProfile_Username_fk": {
+          "name": "ChatMessage_Username_UserProfile_Username_fk",
+          "tableFrom": "ChatMessage",
+          "tableTo": "UserProfile",
+          "columnsFrom": [
+            "Username"
+          ],
+          "columnsTo": [
+            "Username"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "ChatMessage_ChatRoomId_ChatRoom_ChatRoomId_fk": {
+          "name": "ChatMessage_ChatRoomId_ChatRoom_ChatRoomId_fk",
+          "tableFrom": "ChatMessage",
+          "tableTo": "ChatRoom",
+          "columnsFrom": [
+            "ChatRoomId"
+          ],
+          "columnsTo": [
+            "ChatRoomId"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.ChatRoom": {
+      "name": "ChatRoom",
+      "schema": "",
+      "columns": {
+        "ChatRoomId": {
+          "name": "ChatRoomId",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "ChatRoomName": {
+          "name": "ChatRoomName",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.UserProfile_ChatRoom": {
+      "name": "UserProfile_ChatRoom",
+      "schema": "",
+      "columns": {
+        "Username": {
+          "name": "Username",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ChatRoomId": {
+          "name": "ChatRoomId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "UserProfile_ChatRoom_Username_UserProfile_Username_fk": {
+          "name": "UserProfile_ChatRoom_Username_UserProfile_Username_fk",
+          "tableFrom": "UserProfile_ChatRoom",
+          "tableTo": "UserProfile",
+          "columnsFrom": [
+            "Username"
+          ],
+          "columnsTo": [
+            "Username"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "UserProfile_ChatRoom_ChatRoomId_ChatRoom_ChatRoomId_fk": {
+          "name": "UserProfile_ChatRoom_ChatRoomId_ChatRoom_ChatRoomId_fk",
+          "tableFrom": "UserProfile_ChatRoom",
+          "tableTo": "ChatRoom",
+          "columnsFrom": [
+            "ChatRoomId"
+          ],
+          "columnsTo": [
+            "ChatRoomId"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "UserProfile_ChatRoom_Username_ChatRoomId_pk": {
+          "name": "UserProfile_ChatRoom_Username_ChatRoomId_pk",
+          "columns": [
+            "Username",
+            "ChatRoomId"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.Image": {
+      "name": "Image",
+      "schema": "",
+      "columns": {
+        "ImageId": {
+          "name": "ImageId",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "ImagePath": {
+          "name": "ImagePath",
+          "type": "varchar(512)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ImageType": {
+          "name": "ImageType",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.UserCredential": {
+      "name": "UserCredential",
+      "schema": "",
+      "columns": {
+        "Username": {
+          "name": "Username",
+          "type": "varchar(32)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "Password": {
+          "name": "Password",
+          "type": "char(60)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "UserCredential_Username_UserProfile_Username_fk": {
+          "name": "UserCredential_Username_UserProfile_Username_fk",
+          "tableFrom": "UserCredential",
+          "tableTo": "UserProfile",
+          "columnsFrom": [
+            "Username"
+          ],
+          "columnsTo": [
+            "Username"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.UserFriend": {
+      "name": "UserFriend",
+      "schema": "",
+      "columns": {
+        "UserProfile_Username": {
+          "name": "UserProfile_Username",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "AddedProfile_Username": {
+          "name": "AddedProfile_Username",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "IsAccepted": {
+          "name": "IsAccepted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ChatRoomId": {
+          "name": "ChatRoomId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "UserFriend_UserProfile_Username_UserProfile_Username_fk": {
+          "name": "UserFriend_UserProfile_Username_UserProfile_Username_fk",
+          "tableFrom": "UserFriend",
+          "tableTo": "UserProfile",
+          "columnsFrom": [
+            "UserProfile_Username"
+          ],
+          "columnsTo": [
+            "Username"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "UserFriend_AddedProfile_Username_UserProfile_Username_fk": {
+          "name": "UserFriend_AddedProfile_Username_UserProfile_Username_fk",
+          "tableFrom": "UserFriend",
+          "tableTo": "UserProfile",
+          "columnsFrom": [
+            "AddedProfile_Username"
+          ],
+          "columnsTo": [
+            "Username"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "UserFriend_ChatRoomId_ChatRoom_ChatRoomId_fk": {
+          "name": "UserFriend_ChatRoomId_ChatRoom_ChatRoomId_fk",
+          "tableFrom": "UserFriend",
+          "tableTo": "ChatRoom",
+          "columnsFrom": [
+            "ChatRoomId"
+          ],
+          "columnsTo": [
+            "ChatRoomId"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "UserFriend_UserProfile_Username_AddedProfile_Username_pk": {
+          "name": "UserFriend_UserProfile_Username_AddedProfile_Username_pk",
+          "columns": [
+            "UserProfile_Username",
+            "AddedProfile_Username"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.UserProfile": {
+      "name": "UserProfile",
+      "schema": "",
+      "columns": {
+        "Username": {
+          "name": "Username",
+          "type": "varchar(32)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "UserBio": {
+          "name": "UserBio",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "UserPfp": {
+          "name": "UserPfp",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "CreatedAt": {
+          "name": "CreatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "UpdatedAt": {
+          "name": "UpdatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "UserProfile_UserPfp_Image_ImageId_fk": {
+          "name": "UserProfile_UserPfp_Image_ImageId_fk",
+          "tableFrom": "UserProfile",
+          "tableTo": "Image",
+          "columnsFrom": [
+            "UserPfp"
+          ],
+          "columnsTo": [
+            "ImageId"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

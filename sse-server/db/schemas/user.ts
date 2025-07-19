@@ -1,9 +1,11 @@
 import { pgTable, varchar, char, timestamp, boolean, primaryKey, uuid } from "drizzle-orm/pg-core";
 import { ChatRoomTable } from "./chat";
+import { ImageTable } from "./image";
 
 export const UserProfileTable = pgTable("UserProfile", {
     Username: varchar("Username", { length: 32 }).notNull().primaryKey(),
     UserBio: varchar("UserBio", { length: 256 }),
+    UserPfp: uuid('UserPfp').references(() => ImageTable.ImageId),
     CreatedAt: timestamp("CreatedAt").defaultNow().notNull(),
     UpdatedAt: timestamp("UpdatedAt").defaultNow().notNull()
 });

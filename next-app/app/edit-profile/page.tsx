@@ -4,11 +4,13 @@ import Button from '@/lib/components/util/button';
 import styles from './page.module.css';
 import FriendCard from '@/lib/components/friends/friend-card';
 import FriendActionButton from '@/lib/components/friends/friend-action-button';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { getPfp, setPfp } from '@/lib/server-actions/image';
 
 export default function EditProfile() {
     const [isEditingBio, setIsEditingBio] = useState<boolean>(false);
     const [bioText, setBioText] = useState<string>("");
+    const [pfpSrc, setPfpSrc] = useState<string>("/added.svg");
 
     const handleBioEditToggle = () => {
         setIsEditingBio(!isEditingBio);
@@ -20,6 +22,35 @@ export default function EditProfile() {
             return;
         }
     }
+
+    const handlePfpUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if(!e.currentTarget.files || e.currentTarget.files.length === 0) return;
+
+        const image = e.currentTarget.files[0];
+        const res = await setPfp(image);
+        if(res.success) {
+            setPfpSrc(URL.createObjectURL(image));
+        }
+
+    }
+
+    const retrieveInitialPfp = async () => {
+        try {
+            const res = await getPfp();
+            if(!res.success || res.error || !res.file) return;
+
+            console.log(res.file);
+
+            const url = URL.createObjectURL(res.file);
+            setPfpSrc(url);
+        } catch(err) {
+            console.error(err);
+        }
+    }
+
+    useEffect(() => {
+        retrieveInitialPfp();
+    }, [])
 
     return (
         <div
@@ -33,8 +64,20 @@ export default function EditProfile() {
             </div>
             <div className={styles.pfpCell}>
                 <div className={styles.pfpAndButtonWrapper}>
-                    <div className={styles.pfpWrapper}></div>
-                    <Button>change picture</Button>
+                    <div className={styles.pfpWrapper}>
+                        <img src={pfpSrc} />
+                    </div>
+                    <label 
+                        htmlFor="pfp-input"
+                    >change picture</label>
+                    <input 
+                        type='file' 
+                        name="pfp-input"
+                        id="pfp-input"
+                        onChange={handlePfpUpload}
+                        accept="image/png, image/jpeg"
+                        style={{display: "none"}}
+                    />
                 </div>
             </div>
             <div className={styles.homeCell}>

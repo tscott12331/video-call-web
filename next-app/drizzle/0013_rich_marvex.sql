@@ -1,0 +1,1 @@
+ALTER TABLE "Image" ADD COLUMN "ImageType" varchar(32) NOT NULL;

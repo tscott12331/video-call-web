@@ -1,0 +1,2 @@
+ALTER TABLE "UserProfile" ADD COLUMN "UserPfp" uuid;--> statement-breakpoint
+ALTER TABLE "UserProfile" ADD CONSTRAINT "UserProfile_UserPfp_Image_ImageId_fk" FOREIGN KEY ("UserPfp") REFERENCES "public"."Image"("ImageId") ON DELETE no action ON UPDATE no action;
