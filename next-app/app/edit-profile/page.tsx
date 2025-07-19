@@ -6,14 +6,36 @@ import FriendCard from '@/lib/components/friends/friend-card';
 import FriendActionButton from '@/lib/components/friends/friend-action-button';
 import { useEffect, useState } from 'react';
 import { getPfp, setPfp } from '@/lib/server-actions/image';
+import { getUserProfile, updateUserProfile } from '@/lib/server-actions/user';
+
+type TProfileObj = {
+    Username: string;
+    UserBio: string;
+    CreatedAt: Date | null;
+    UpdatedAt: Date | null;
+}
 
 export default function EditProfile() {
     const [isEditingBio, setIsEditingBio] = useState<boolean>(false);
-    const [bioText, setBioText] = useState<string>("");
     const [pfpSrc, setPfpSrc] = useState<string>("/added.svg");
+    const [profileObj, setProfileObj] = useState<TProfileObj>({
+        Username: "",
+        UserBio: "",
+        CreatedAt: null,
+        UpdatedAt: null,
+    });
 
-    const handleBioEditToggle = () => {
-        setIsEditingBio(!isEditingBio);
+    const handleBioEditToggle = async () => {
+        if(isEditingBio) {
+            try {
+                await updateUserProfile({ UserBio: profileObj.UserBio });
+                setIsEditingBio(false);
+            } catch(err) {
+                console.error(err);
+            }
+        } else {
+            setIsEditingBio(true);
+        }
     }
 
     const handleBioKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -34,12 +56,10 @@ export default function EditProfile() {
 
     }
 
-    const retrieveInitialPfp = async () => {
+    const initializePfp = async () => {
         try {
             const res = await getPfp();
             if(!res.success || res.error || !res.file) return;
-
-            console.log(res.file);
 
             const url = URL.createObjectURL(res.file);
             setPfpSrc(url);
@@ -48,8 +68,21 @@ export default function EditProfile() {
         }
     }
 
+    const initializeUserProfile = async () => {
+        try {
+            initializePfp();
+
+            const res = await getUserProfile();
+            if(res.error || !res.success || !res.userProfile) return;
+
+            setProfileObj(res.userProfile);
+        } catch(err) {
+            console.error(err);
+        }
+    }
+
     useEffect(() => {
-        retrieveInitialPfp();
+        initializeUserProfile();
     }, [])
 
     return (
@@ -57,7 +90,7 @@ export default function EditProfile() {
             className={styles.page}
         >
             <div className={styles.usernameCell}>
-                <h2 className={styles.username}>username</h2>
+                <h2 className={styles.username}>{profileObj.Username}</h2>
                 <FriendActionButton 
                     friendStatus='unadded'
             />
@@ -91,13 +124,14 @@ export default function EditProfile() {
             <div className={styles.bioCell}>
                 {isEditingBio ?
                 <textarea 
-                    defaultValue={bioText} 
+                    defaultValue={profileObj.UserBio} 
                     className={styles.bioEdit}
                     onKeyDown={handleBioKeyDown}
-                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setBioText(e.currentTarget.value)}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => 
+                        setProfileObj({...profileObj, UserBio: e.currentTarget.value})}
                 ></textarea>
                 :
-                <p className={styles.bio}>{bioText}</p>
+                <p className={styles.bio}>{profileObj.UserBio}</p>
                 }
                 <Button
                     onClick={handleBioEditToggle}

@@ -81,6 +81,20 @@ export async function setPfp(image: File) {
             }
         }
 
+        const originalPaths = await db.select({ path: ImageTable.ImagePath })
+                    .from(ImageTable)
+                    .innerJoin(UserProfileTable, 
+                        eq(UserProfileTable.UserPfp, ImageTable.ImageId)
+                    )
+                    .where(
+                        eq(UserProfileTable.Username, username)
+                    );
+        if(originalPaths.length !== 0) {
+            const originalPath = originalPaths[0].path;
+            await fs.rm(originalPath);
+        }
+
+
         await db.update(UserProfileTable).set({
             UserPfp: res.imageId,
         }).where(
@@ -138,7 +152,6 @@ export async function getPfp() {
             success: false,
             error: "Server error",
         }
-        console.log(fileName);
 
         const file = new File([blob], fileName, { type: imgObj.type });
 
