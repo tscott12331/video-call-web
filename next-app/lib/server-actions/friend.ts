@@ -4,7 +4,7 @@ import { UserFriendTable, UserProfileTable } from "../db/schemas/user";
 import { and, eq, isNotNull, not, or } from "drizzle-orm";
 import { authenticateUser } from "./auth";
 import { ChatRoomTable, UserProfile_ChatRoom } from "../db/schemas/chat";
-import { TRoom } from "@/app/page";
+import { TFriend, TRoom } from "@/app/page";
 
 export async function friendAction(friendUsername: string) {
     try {
@@ -193,7 +193,7 @@ export async function getFriends(limit: number = 10, offset: number = 0) {
 
         const { username } = authRes;
 
-        const friendList: Friend[] = await db.select({
+        const friendList: TFriend[] = await db.select({
             username: UserProfileTable.Username,
             roomId: UserFriendTable.ChatRoomId,
         })

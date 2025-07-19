@@ -4,9 +4,11 @@ import Button from '@/lib/components/util/button';
 import styles from './page.module.css';
 import FriendCard from '@/lib/components/friends/friend-card';
 import FriendActionButton from '@/lib/components/friends/friend-action-button';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getPfp, setPfp } from '@/lib/server-actions/image';
 import { getUserProfile, updateUserProfile } from '@/lib/server-actions/user';
+import { TFriend } from '../page';
+import { getFriends } from '@/lib/server-actions/friend';
 
 type TProfileObj = {
     Username: string;
@@ -17,6 +19,8 @@ type TProfileObj = {
 
 export default function EditProfile() {
     const [isEditingBio, setIsEditingBio] = useState<boolean>(false);
+    const bioRef = useRef<HTMLTextAreaElement>(null);
+    const [friendsList, setFriendsList] = useState<TFriend[]>([]);
     const [pfpSrc, setPfpSrc] = useState<string>("/added.svg");
     const [profileObj, setProfileObj] = useState<TProfileObj>({
         Username: "",
@@ -40,6 +44,7 @@ export default function EditProfile() {
 
     const handleBioKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if(e.key === 'Enter') {
+            e.preventDefault();
             handleBioEditToggle();
             return;
         }
@@ -81,8 +86,28 @@ export default function EditProfile() {
         }
     }
 
+    const fetchUserData = async () => {
+        try {
+            await initializeUserProfile();
+            const res = await getFriends();
+            if(res.error || !res.success || !res.friendList) return;
+
+            setFriendsList(res.friendList);
+        } catch(err) {
+            console.error(err);
+        }
+    }
+
     useEffect(() => {
-        initializeUserProfile();
+        if(isEditingBio && bioRef.current) {
+            bioRef.current.focus();
+            bioRef.current.selectionStart = profileObj.UserBio.length;
+            bioRef.current.selectionEnd = profileObj.UserBio.length;
+        }
+    }, [isEditingBio])
+
+    useEffect(() => {
+        fetchUserData();
     }, [])
 
     return (
@@ -129,6 +154,8 @@ export default function EditProfile() {
                     onKeyDown={handleBioKeyDown}
                     onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => 
                         setProfileObj({...profileObj, UserBio: e.currentTarget.value})}
+                    ref={bioRef}
+                    onBlur={handleBioEditToggle}
                 ></textarea>
                 :
                 <p className={styles.bio}>{profileObj.UserBio}</p>
@@ -139,30 +166,18 @@ export default function EditProfile() {
                 {isEditingBio ? 
                     "done"
                 :
-                    "edit"
+                    "edit bio"
                 }
                 </Button>
             </div>
             <h2 className={styles.friendsTitle}>friends</h2>
             <div className={styles.friendsCell}>
-                <FriendCard
-                    username="another user"
-                />
-                <FriendCard
-                    username="another user"
-                />
-                <FriendCard
-                    username="another user"
-                />
-                <FriendCard
-                    username="another user"
-                />
-                <FriendCard
-                    username="another user"
-                />
-                <FriendCard
-                    username="another user"
-                />
+                {friendsList.map(friend => 
+                    <FriendCard
+                        username={friend.username}
+                        key={friend.username}
+                    />
+                )}
             </div>
         </div>
     )
