@@ -19,7 +19,7 @@ type TProfileObj = {
 export default function EditProfile() {
     const bioRef = useRef<HTMLTableCellElement>(null);
     const [friendsList, setFriendsList] = useState<TFriend[]>([]);
-    const [pfpSrc, setPfpSrc] = useState<string>("/added.svg");
+    const [pfpSrc, setPfpSrc] = useState<string|undefined>(undefined);
     const [profileObj, setProfileObj] = useState<TProfileObj>({
         Username: "",
         UserBio: "",
@@ -113,7 +113,7 @@ export default function EditProfile() {
             <div className={styles.pfpCell}>
                 <div className={styles.pfpAndButtonWrapper}>
                     <div className={styles.pfpWrapper}>
-                        <img src={pfpSrc} />
+                        <img src={pfpSrc} alt="loading" />
                     </div>
                     <label 
                         htmlFor="pfp-input"
