@@ -1,14 +1,13 @@
 "use client"
 
-import Button from '@/lib/components/util/button';
 import styles from './page.module.css';
 import FriendCard from '@/lib/components/friends/friend-card';
-import FriendActionButton from '@/lib/components/friends/friend-action-button';
 import { useEffect, useRef, useState } from 'react';
 import { getPfp, setPfp } from '@/lib/server-actions/image';
 import { getUserProfile, updateUserProfile } from '@/lib/server-actions/user';
 import { TFriend } from '../page';
 import { getFriends } from '@/lib/server-actions/friend';
+import Button from '@/lib/components/util/button';
 
 type TProfileObj = {
     Username: string;
@@ -18,8 +17,7 @@ type TProfileObj = {
 }
 
 export default function EditProfile() {
-    const [isEditingBio, setIsEditingBio] = useState<boolean>(false);
-    const bioRef = useRef<HTMLTextAreaElement>(null);
+    const bioRef = useRef<HTMLTableCellElement>(null);
     const [friendsList, setFriendsList] = useState<TFriend[]>([]);
     const [pfpSrc, setPfpSrc] = useState<string>("/added.svg");
     const [profileObj, setProfileObj] = useState<TProfileObj>({
@@ -29,24 +27,26 @@ export default function EditProfile() {
         UpdatedAt: null,
     });
 
-    const handleBioEditToggle = async () => {
-        if(isEditingBio) {
-            try {
-                await updateUserProfile({ UserBio: profileObj.UserBio });
-                setIsEditingBio(false);
-            } catch(err) {
-                console.error(err);
-            }
-        } else {
-            setIsEditingBio(true);
+    const handleBioSave = async () => {
+        try {
+            await updateUserProfile({ UserBio: profileObj.UserBio });
+        } catch(err) {
+            console.error(err);
         }
     }
 
-    const handleBioKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    const handleBioKeyDown = (e: React.KeyboardEvent<HTMLTableCellElement>) => {
         if(e.key === 'Enter') {
             e.preventDefault();
-            handleBioEditToggle();
+            bioRef.current?.blur();
+            handleBioSave();
             return;
+        }
+    }
+
+    const handleBioChange = (e: React.InputEvent<HTMLTableCellElement>) => {
+        if(bioRef.current) {
+            setProfileObj({...profileObj, UserBio: bioRef.current.textContent ?? ""})
         }
     }
 
@@ -81,6 +81,7 @@ export default function EditProfile() {
             if(res.error || !res.success || !res.userProfile) return;
 
             setProfileObj(res.userProfile);
+            if(bioRef.current) bioRef.current.textContent = res.userProfile.UserBio;
         } catch(err) {
             console.error(err);
         }
@@ -99,14 +100,6 @@ export default function EditProfile() {
     }
 
     useEffect(() => {
-        if(isEditingBio && bioRef.current) {
-            bioRef.current.focus();
-            bioRef.current.selectionStart = profileObj.UserBio.length;
-            bioRef.current.selectionEnd = profileObj.UserBio.length;
-        }
-    }, [isEditingBio])
-
-    useEffect(() => {
         fetchUserData();
     }, [])
 
@@ -116,9 +109,6 @@ export default function EditProfile() {
         >
             <div className={styles.usernameCell}>
                 <h2 className={styles.username}>{profileObj.Username}</h2>
-                <FriendActionButton 
-                    friendStatus='unadded'
-            />
             </div>
             <div className={styles.pfpCell}>
                 <div className={styles.pfpAndButtonWrapper}>
@@ -146,30 +136,26 @@ export default function EditProfile() {
                     <img src='/home-icon.svg' />
                 </a>
             </div>
-            <div className={styles.bioCell}>
-                {isEditingBio ?
-                <textarea 
-                    defaultValue={profileObj.UserBio} 
-                    className={styles.bioEdit}
-                    onKeyDown={handleBioKeyDown}
-                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => 
-                        setProfileObj({...profileObj, UserBio: e.currentTarget.value})}
-                    ref={bioRef}
-                    onBlur={handleBioEditToggle}
-                ></textarea>
-                :
-                <p className={styles.bio}>{profileObj.UserBio}</p>
-                }
-                <Button
-                    onClick={handleBioEditToggle}
-                >
-                {isEditingBio ? 
-                    "done"
-                :
-                    "edit bio"
-                }
-                </Button>
-            </div>
+            <table className={styles.bioCell}>
+                <tbody>
+                    <tr>
+                        <td 
+                            valign="middle"
+                            className={styles.bio}
+                            contentEditable="true"
+                            onKeyDown={handleBioKeyDown}
+                            onInput={handleBioChange}
+                            ref={bioRef}
+                            onBlur={handleBioSave}
+                        ></td>
+                        <td>
+                            <Button
+                                style={{visibility: 'hidden'}}
+                            >change picture</Button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
             <h2 className={styles.friendsTitle}>friends</h2>
             <div className={styles.friendsCell}>
                 {friendsList.map(friend => 
