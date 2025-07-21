@@ -83,6 +83,9 @@
 
 .homeCell {
     grid-area: home;
+    display: flex;
+    justify-content: end;
+    align-items: center;
 }
 
 .homeWrapper {
@@ -90,8 +93,6 @@
 
     width: 30px;
     height: 30px;
-    justify-self: end;
-    align-self: center;
 
     text-decoration: none;
 }

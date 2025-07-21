@@ -84,7 +84,7 @@
 
 .addFriendCell {
     grid-row: friend-list;
-    padding: 5px 2px;
+    padding: 5px;
 
     display: flex;
     flex-direction: column;
