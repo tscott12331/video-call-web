@@ -1,7 +1,7 @@
 "use server";
 import { db } from "../db/db";
 import { UserFriendTable, UserProfileTable } from "../db/schemas/user";
-import { and, eq, isNotNull, not, or } from "drizzle-orm";
+import { and, eq, isNotNull, like, not, or, sql } from "drizzle-orm";
 import { authenticateUser } from "./auth";
 import { ChatRoomTable, UserProfile_ChatRoom } from "../db/schemas/chat";
 import { TFriend, TRoom } from "@/app/page";
@@ -153,21 +153,26 @@ export async function getRooms(limit: number = 10, offset: number = 0) {
 
         const { username } = authRes;
 
-        const rooms: TRoom[] = await db.select({
+        const dbRooms = await db.select({
                         id: UserProfile_ChatRoom.ChatRoomId,
                         name: ChatRoomTable.ChatRoomName,
+                        users: sql`array_agg(${UserProfile_ChatRoom.Username}) as users`.mapWith(String),
                     })
                     .from(UserProfile_ChatRoom)
-                    .innerJoin(ChatRoomTable,
+                    .leftJoin(ChatRoomTable,
                         eq(UserProfile_ChatRoom.ChatRoomId, ChatRoomTable.ChatRoomId)
                     )
-                    .where(
-                        eq(UserProfile_ChatRoom.Username, username)
-                    )
+                    .groupBy(UserProfile_ChatRoom.ChatRoomId, ChatRoomTable.ChatRoomName)
+                    .where(isNotNull(ChatRoomTable.ChatRoomName))
                     .limit(limit)
                     .offset(offset);
 
-        console.log(rooms);
+        let rooms: TRoom[] = dbRooms.filter(room => room.name && 
+                                   room.users.split(',').includes(username))
+                            .map(room => (
+                                {
+                                    ...room, users: room.users.split(',')
+                                })) as TRoom[];
 
         return {
             success: true,

@@ -34,6 +34,7 @@ export type TFriend = {
 export type TRoom = {
     name: string,
     id: string,
+    users: string[],
 }
 
 export type TNotifications = Record<string, number>;
@@ -89,6 +90,7 @@ export default function Home() {
                 }
                 return <VideoArea 
                 room={selectedRoom} 
+                username={loggedInUser}
                 onMessageClick={() => handleMainAreaChange(MAIN_AREA.MESSAGE_AREA, selectedRoom)}
                 />
         }
@@ -201,6 +203,7 @@ export default function Home() {
             selectedRoom={selectedRoom}
             newRoom={newRoomTog}
             notifications={notifications}
+            username={loggedInUser}
             />
             {renderMainArea()}
             {showAddFriends &&

@@ -15,11 +15,13 @@ type TMediaConstraint = {
 
 interface VideoAreaProps {
     room: TRoom;
+    username: string|null|undefined;
     onMessageClick?: () => void;
 }
 
 export default function VideoArea({
     room,
+    username,
     onMessageClick,
 }: VideoAreaProps) {
     const [shouldShowInfo, setShouldShowInfo] = useState<boolean>(false);
@@ -129,7 +131,8 @@ export default function VideoArea({
             onMouseEnter={maintainControls}
             onMouseLeave={resetFlash}
             visible={shouldShowInfo}
-            roomName={room.name}
+            room={room}
+            username={username}
             onControlClick={onMessageClick}
             />
             <video ref={myVideoFeed} autoPlay={true}>cannot display video</video>

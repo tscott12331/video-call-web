@@ -1,17 +1,20 @@
+import { TRoom } from '@/app/page';
 import styles from './user-info-top-bar.module.css';
 
 interface RoomInfoTopBarProps {
     absolutePosition?: 'top' | 'bottom';
     visible?: boolean;
-    roomName: string;
+    room: TRoom;
     onControlClick?: () => void;
+    username: string|null|undefined;
 }
 
 export default function RoomInfoTopBar({
     absolutePosition,
     visible = true,
-    roomName,
+    room,
     onControlClick,
+    username,
     ...rest
 }: RoomInfoTopBarProps & React.HTMLAttributes<HTMLDivElement>) {
     return (
@@ -38,7 +41,11 @@ export default function RoomInfoTopBar({
         >
             <div className={styles.mainIconTextWrapper}>
                 <div className={styles.pfpBigIcon}></div>
-                <p className={styles.infoUsername}>{roomName}</p>
+                <p className={styles.infoUsername}>{
+                    room.users.length > 2 ?
+                    room.name :
+                    room.users.find(user => user !== username)
+                }</p>
             </div>
             <div 
             className={styles.bigIcon}

@@ -13,6 +13,7 @@ interface SidebarProps {
     selectedRoom: TRoom|null|undefined;
     newRoom: boolean;
     notifications: TNotifications;
+    username: string|null|undefined;
 }
 
 export default function Sidebar({
@@ -22,6 +23,7 @@ export default function Sidebar({
     selectedRoom,
     newRoom,
     notifications,
+    username,
 }: SidebarProps) {
     const [roomList, setRoomList] = useState<TRoom[]>([]);
     const [showProfilePopup, setShowProfilePopup] = useState<boolean>(false);
@@ -83,6 +85,7 @@ export default function Sidebar({
                 roomList.map(room =>
                     <SidebarFriendCard
                     room={room}
+                    username={username}
                     onFriendMessageClick={onFriendMessageClick}
                     onFriendVideoClick={onFriendVideoClick}
                     isSelected={room.id === selectedRoom?.id}

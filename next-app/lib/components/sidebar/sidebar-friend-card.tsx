@@ -7,6 +7,7 @@ interface SidebarFriendCardProps {
     room: TRoom;
     isSelected: boolean;
     numUnread: number;
+    username: string|null|undefined;
 }
 
 export default function SidebarFriendCard({
@@ -15,6 +16,7 @@ export default function SidebarFriendCard({
     room,
     isSelected,
     numUnread,
+    username,
 }: SidebarFriendCardProps) {
     const handleControlClick = (e: React.MouseEvent<HTMLDivElement>, type: 'video' | 'message') => {
         e.stopPropagation();
@@ -33,7 +35,11 @@ export default function SidebarFriendCard({
         >
             <div className={styles.sbFriendLeft}>
                 <div className={styles.pfpSmallWrapper}></div>
-                <p className={styles.sbFriendName}>{room.name}</p>
+                <p className={styles.sbFriendName}>{
+                    room.users.length > 2 ?
+                    room.name :
+                    room.users.find(user => user !== username)
+                }</p>
             </div>
             <div className={styles.sbFriendRight}>
                 <div 
@@ -50,12 +56,15 @@ export default function SidebarFriendCard({
                         }</div>
                     }
                 </div>
+                {
+                room.users.length <= 2 &&
                 <div 
                 className={styles.videoSmallIcon}
                 onClick={(e) => handleControlClick(e, 'video')}
                 >
                     <img src='/video-icon.svg' />
                 </div>
+                }
             </div>
         </div>
     );

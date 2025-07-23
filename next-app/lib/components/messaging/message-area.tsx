@@ -128,7 +128,8 @@ export default function MessageArea({
     return (
         <section className={styles.mainSection}>
             <RoomInfoTopBar 
-            roomName={room.name}
+            username={username}
+            room={room}
             onControlClick={onVideoClick}
             />
             <div
