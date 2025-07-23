@@ -131,7 +131,9 @@ export default function MessageArea({
             username={username}
             room={room}
             onControlClick={onVideoClick}
-            />
+            >
+                <img src='/video-icon.svg'/>
+            </RoomInfoTopBar>
             <div
                 className={styles.mainMessageWrapper}
                 ref={messageWrapper}

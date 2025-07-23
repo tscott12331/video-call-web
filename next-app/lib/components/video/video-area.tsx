@@ -134,7 +134,9 @@ export default function VideoArea({
             room={room}
             username={username}
             onControlClick={onMessageClick}
-            />
+            >
+                <img src='/message-icon.svg'/>
+            </RoomInfoTopBar>
             <video ref={myVideoFeed} autoPlay={true}>cannot display video</video>
             <CallControls 
             onMouseEnter={maintainControls}

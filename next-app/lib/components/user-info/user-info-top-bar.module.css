@@ -29,6 +29,9 @@
 .bigIcon {
     width: 40px;
     height: 40px;
-    
-    border: 1px solid black;
+}
+
+.bigIcon:hover {
+    transition: filter;
+    filter: drop-shadow(1px 1px 5px lightgrey);
 }

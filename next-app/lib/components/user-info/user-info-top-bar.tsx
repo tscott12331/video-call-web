@@ -7,6 +7,7 @@ interface RoomInfoTopBarProps {
     room: TRoom;
     onControlClick?: () => void;
     username: string|null|undefined;
+    children?: React.ReactNode;
 }
 
 export default function RoomInfoTopBar({
@@ -15,6 +16,7 @@ export default function RoomInfoTopBar({
     room,
     onControlClick,
     username,
+    children,
     ...rest
 }: RoomInfoTopBarProps & React.HTMLAttributes<HTMLDivElement>) {
     return (
@@ -50,7 +52,9 @@ export default function RoomInfoTopBar({
             <div 
             className={styles.bigIcon}
             onClick={() => onControlClick?.()}
-            ></div>
+            >
+                {children}
+            </div>
         </div>
     )
 }
